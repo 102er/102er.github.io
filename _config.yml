@@ -26,8 +26,8 @@ footer:
 # Author 配置博主信息
 author: 'blossom'
 nickname: '一哥'
-bio: 'golang开发者'
-avatar: ''
+bio: '程序员'
+avatar: 'assets/img/avatar.jpg'
 
 # Search
 search: true
