@@ -53,7 +53,7 @@ VRRP全称 Virtual Router Redundancy Protocol，即 虚拟路由冗余协议。 
       }
     }
  #### keepalived安装
- 通过源码安装keepalived，安装步骤如下：
+ 通过源码安装keepalived，安装步骤如下：（主从备机一样搭建，配置略有不同，可以参照注释）
  
     #下载keeplived并安装
     [root@localhost src]# wget https://www.keepalived.org/software/keepalived-2.0.20.tar.gz
@@ -99,7 +99,7 @@ VRRP全称 Virtual Router Redundancy Protocol，即 虚拟路由冗余协议。 
     #查看是否挂了vip 1.1.1.1，和指定的interface网卡挂在一起
     [root@localhost src]# ip addr
     #查看备机的情况 并没有vip
-    [root@PSjssqsjzxyf91 ~]# ip addr
+    [root@localhost2 ~]# ip addr
     #干掉主机的keepalived 发现vip会漂移到备机，测试截图此处忽略
 
 ###
