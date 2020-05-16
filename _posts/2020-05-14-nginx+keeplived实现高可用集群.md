@@ -19,11 +19,13 @@ tags: 高可用 负载均衡 nginx keepalived
 ### keepalived
 基于VRRP协议实现的服务高可用方案，可以用来避免IP单点故障.
 VRRP全称 Virtual Router Redundancy Protocol，即 虚拟路由冗余协议。 可以认为它是实现路由器高可用的容错协议，即将N台提供相同功能的路由器组成一个路由器组(Router Group)，这个组里面有一个master和多个backup，但在外界看来就像一台一样，构成虚拟路由器，拥有一个虚拟IP（vip，也就是路由器所 在局域网内其他机器的默认路由），占有这个IP的master实际负责ARP相应和转发IP数据包，组中的其它路由器作为备份的角色处于待命状态。 master会发组播消息，当backup在超时时间内收不到vrrp包时就认为master宕掉了，这时就需要根据VRRP的优先级来选举一个 backup当master，保证路由器的高可用。
+ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服务怎么搭建，理论上应该要借助其他工具实现异地服务的高可用。
 ### 实际运用
 #### 业务架构
 ![ngiinx](https://blossom102er.github.io/assets/img/nginx+keepalived.png)
-暴露给外部服务的是VIP提供udp的端口，请求到VIP，由nginx提供请求转发，分发到实际的业务进程。其中，keepalived用来保证vip的高可用，当台转发的nginx故障时，
-可以实现vip的漂移。<br>
+暴露给外部服务的是VIP提供udp的端口，请求到VIP，由nginx提供请求转发，分发到实际的业务进程。其中，keepalived用来保证vip的高可用，当台转发的keepalived故障时，
+备机可以主动接管服务，此处需要注意，假如nginx故障，keepalived正常时，服务是没有办法切换到备机的。因为keepalived的服务正常运行，备机没办法接管服务
+所以，我们需要在keepalived配置增加后端服务的状态，如果发现后端服务异常，可以主动把keepalived进程干掉，保证vip的漂移。<br>
 需要提供UDP的反向代理，所以对nginx版本有要求，nginx1.9之后的版本需要在编译时指定--with-stream激活ngx_stream_core_module模块，此模块提供tcp以及udp的代理和负载均衡。
 #### nginx安装
 通过yum安装，首先根据linux的版本指定yum的repo源，安装步骤如下:
