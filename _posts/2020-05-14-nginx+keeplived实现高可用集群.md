@@ -26,7 +26,7 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
 暴露给外部服务的是VIP提供udp的端口，请求到VIP，由nginx提供请求转发，分发到实际的业务进程。其中，keepalived用来保证vip的高可用，当台转发的keepalived故障时，
 备机可以主动接管服务，此处需要注意，假如nginx故障，keepalived正常时，服务是没有办法切换到备机的。因为keepalived的服务正常运行，备机没办法接管服务
 所以，我们需要在keepalived配置增加后端服务的状态，如果发现后端服务异常，可以主动把keepalived进程干掉，保证vip的漂移。<br>
-需要提供UDP的反向代理，所以对nginx版本有要求，nginx1.9之后的版本需要在编译时指定--with-stream激活ngx_stream_core_module模块，此模块提供tcp以及udp的代理和负载均衡。
+另外：需要提供UDP的反向代理，所以对nginx版本有要求，nginx1.9之后的版本需要在编译时指定--with-stream激活ngx_stream_core_module模块，此模块提供tcp以及udp的代理和负载均衡。
 #### nginx安装
 通过yum安装，首先根据linux的版本指定yum的repo源，安装步骤如下:
 
@@ -46,7 +46,9 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
     [root@localhost ~]# vim /etc/nginx/nginx.conf
     stream {
        upstream goflow {
+            hash $remote_addr consistent; #一致hash分配
             server 127.0.0.1:2312;
+            server 127.0.0.2:2312;
        }
      
        server{
@@ -77,7 +79,7 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
     }
      
     vrrp_script chk_nginx {
-        script "/etc/keepalived/nginx_check.sh" #检测nginx服务可用性脚本 如果检测失败，会杀死keepalived的进程，保证服务漂移到slave。这脚本自己安装业务场景编写
+        script "/etc/keepalived/nginx_check.sh" #检测后端服务可用性，如果服务不行，则权重会-20 所有 备机的权重应该是大于80 才能保证服务漂移
         interval 2
         weight 20
     }
@@ -85,7 +87,7 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
     vrrp_instance VI_1 {
         state MASTER         #状态 主=MASTER  备机=BACKUP
         interface eth0       #与备机通讯的网卡
-        virtual_router_id 51 #路由编号，主备必须一致
+        virtual_router_id 134 #路由编号，主备必须一致
         priority 100         #优先级 备机必须小于主机的值
         advert_int 1
         authentication {
@@ -104,5 +106,12 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
     [root@localhost2 ~]# ip addr
     #干掉主机的keepalived 发现vip会漂移到备机，测试截图此处忽略
 
-###
-完成nginx+keepalived高可用+负载均衡服务的搭建。
+### 总结
+以上完成nginx+keepalived高可用+负载均衡服务的搭建。
+本次服务中采用的是nginx的stream模块，反向代理udp请求，本质上和http反向代理没有差别。
+在ngx_stream_upstream_module这个模块上没有http的ip_hash功能，只能通过hash $remote_addr consistent设置。
+具体配置可以参考官方docs说明：
+http://nginx.org/en/docs/stream/ngx_stream_upstream_module.html
+    
+
+
