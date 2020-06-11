@@ -57,7 +57,7 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
       }
     }
     
- #### keepalived安装
+#### keepalived安装
  通过源码安装keepalived，安装步骤如下：（主从备机一样搭建，配置略有不同，可以参照注释）
  
     #下载keeplived并安装
