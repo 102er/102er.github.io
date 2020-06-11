@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 'nginx+keepalived部署'
+title: 'nginx+keepalived负载均衡服务部署'
 date: 2020-05-14
 author: blossom
 cover: 'http://on2171g4d.bkt.clouddn.com/jekyll-banner.png'
@@ -12,7 +12,7 @@ tags: 高可用 负载均衡 nginx keepalived
 ### 概述
 一个服务的高可用是我们衡量服务稳定性的重要指标，往往我们的可用性指标都是在99.99%，那么如何保证服务的高可用呢？这不单单在业务代码层面需要关注，环境层面也是一个重要因素，
 我们没办法保证服务是永不宕机的，所以我们需要搭建一个高可用的服务环境。
-近期业务场景需要提供一个高可用+负载均衡的数据解析服务，保证agent上报的数据完整性，计划使用keepalived+nginx来实现高可用和请求负载均衡，保证一台服务故障，能自动切换
+近期业务场景需要提供一个高可用+负载均衡的数据解析服务，保证agent上报的数据完整性，计划使用keepalived+nginx来实现高可用和请求负载均衡，当一台服务故障时，能自动切换
 到备机服务。
 ### nginx
 一款面向性能设计的http服务器，能反向代理http，https，smtp等协议请求，并且能够根据规则分发请求，达到负载均衡的目的。
@@ -23,10 +23,10 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
 ### 实际运用
 #### 业务架构
 ![ngiinx](https://blossom102er.github.io/assets/img/nginx+keepalived.png)
-暴露给外部服务的是VIP提供udp的端口，请求到VIP，由nginx提供请求转发，分发到实际的业务进程。其中，keepalived用来保证vip的高可用，当台转发的keepalived故障时，
+暴露给外部服务的是VIP提供udp的端口，请求到VIP，由nginx提供请求转发，分发到实际的业务进程。其中，keepalived用来保证vip的高可用，当1台转发的keepalived故障时，
 备机可以主动接管服务，此处需要注意，假如nginx故障，keepalived正常时，服务是没有办法切换到备机的。因为keepalived的服务正常运行，备机没办法接管服务
 所以，我们需要在keepalived配置增加后端服务的状态，如果发现后端服务异常，可以主动把keepalived进程干掉，保证vip的漂移。<br>
-另外：需要提供UDP的反向代理，所以对nginx版本有要求，nginx1.9之后的版本需要在编译时指定--with-stream激活ngx_stream_core_module模块，此模块提供tcp以及udp的代理和负载均衡。
+另外：需要提供UDP的反向代理，所以对nginx版本有要求，nginx1.9之后的版本需要在编译时指定--with-stream激活ngx_stream_core_module模块，此模块提供tcp以及udp的代理和负载均衡。（我这边安装的是最新版本的nginx，并不需要额外编译stream模块）
 #### nginx安装
 通过yum安装，首先根据linux的版本指定yum的repo源，安装步骤如下:
 
@@ -56,6 +56,7 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
          proxy_pass goflow;
       }
     }
+    
  #### keepalived安装
  通过源码安装keepalived，安装步骤如下：（主从备机一样搭建，配置略有不同，可以参照注释）
  
