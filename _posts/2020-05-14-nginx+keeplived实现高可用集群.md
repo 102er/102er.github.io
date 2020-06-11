@@ -109,9 +109,9 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
 
 ### 总结
 以上完成nginx+keepalived高可用+负载均衡服务的搭建。
-本次服务中采用的是nginx的stream模块，反向代理udp请求，本质上和http反向代理没有差别。
+<br>本次服务中采用的是nginx的stream模块，反向代理udp请求，本质上和http反向代理没有差别。
 在ngx_stream_upstream_module这个模块上没有http的ip_hash功能，只能通过hash $remote_addr consistent设置。
-具体配置可以参考官方docs说明：
+<br>具体配置可以参考官方docs说明：
 http://nginx.org/en/docs/stream/ngx_stream_upstream_module.html
     
 
