@@ -111,6 +111,8 @@ ps：保证rs机器和vip同网段，目前没有研究机器异地keepalived服
 以上完成nginx+keepalived高可用+负载均衡服务的搭建。
 <br>本次服务中采用的是nginx的stream模块，反向代理udp请求，本质上和http反向代理没有差别。
 在ngx_stream_upstream_module这个模块上没有http的ip_hash功能，只能通过hash $remote_addr consistent设置。
+<br> 实际服务运行中，碰到服务不可用的情况。经排查是keepalived部署环境网络问题，backup超过4s没收到master的心跳就会把自己提升为master，导致产生了脑裂，后面更改了keepalived的配置，把组播
+更改成单播，服务趋向于稳定状态。
 <br>具体配置可以参考官方docs说明：
 http://nginx.org/en/docs/stream/ngx_stream_upstream_module.html
     
