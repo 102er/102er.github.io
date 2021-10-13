@@ -326,9 +326,21 @@
             <h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
 <h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
 <ul>
-<li><img src="https://github.com/102er/102er.github.io/images/git-reset-log.png" alt="avatar"></li>
+<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
 </ul>
-<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。</p>
+<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
+<ol>
+<li>git reset –hard  a94308f  #回退到这个版本</li>
+<li>git cherry-pick fb9e36f</li>
+<li>git cherry-pick 6d60f55</li>
+<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
+<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
+</ol>
+<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 帮助我们解决多量commit的场景。</p>
+<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：</p>
+<p><code>git revert -n 057c752</code></p>
+<p>它仅仅只是踢掉这个commit，其他的commit还是在的。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
 
           
         
