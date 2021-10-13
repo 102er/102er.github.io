@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="GO," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="T和*T的调用关系在Go语言中，为了方便，对于一个非指针和非接口定义类型T，  一个T类型的值可以调用为*T类型声明的方法，但是仅当此T的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此T值的地址。 因为不是任何T值都是可寻址的，所以并非任何T值都能够调用为类型*T声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址） 一个*T类型的值可以调用为类型T声明的方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GO的面试题">
+<meta property="og:url" content="http://example.com/2021/08/19/GO%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/index.html">
+<meta property="og:site_name" content="102er">
+<meta property="og:description" content="T和*T的调用关系在Go语言中，为了方便，对于一个非指针和非接口定义类型T，  一个T类型的值可以调用为*T类型声明的方法，但是仅当此T的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此T值的地址。 因为不是任何T值都是可寻址的，所以并非任何T值都能够调用为类型*T声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址） 一个*T类型的值可以调用为类型T声明的方法。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-19T06:29:55.000Z">
+<meta property="article:modified_time" content="2021-08-19T07:16:17.331Z">
+<meta property="article:author" content="blossom">
+<meta property="article:tag" content="GO">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://example.com/2021/08/19/GO的面试题/"/>
+
+
+
+
+
+  <title>GO的面试题 | 102er</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">102er</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">当你与困难面对面时，等待你的是一个新发现</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/GO%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">GO的面试题</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-08-19T14:29:55+08:00">
+                2021-08-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
+<ul>
+<li>一个<code>T</code>类型的值可以调用为<code>*T</code>类型声明的方法，但是仅当此<code>T</code>的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此<code>T</code>值的地址。 因为不是任何<code>T</code>值都是可寻址的，所以并非任何<code>T</code>值都能够调用为类型<code>*T</code>声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址）</li>
+<li>一个<code>*T</code>类型的值可以调用为类型<code>T</code>声明的方法。 这是因为解引用指针总是合法的。 这种便利不仅仅是一个语法糖，它也是一种固有的规则。</li>
+</ul>
+<p>所以很合理的， <code>*T</code>的方法集总是<code>T</code>方法集的超集，但反之不然。</p>
+<p>事实上，你可以认为对于每一个为类型<code>T</code>声明的方法，编译器都会为类型<code>*T</code>自动隐式声明一个同名和同签名的方法。</p>
+<h4 id="for和range区别"><a href="#for和range区别" class="headerlink" title="for和range区别"></a>for和range区别</h4><p>range 在迭代过程中返回的是迭代值的拷贝，如果每次迭代的元素的内存占用很低，那么 for 和 range 的性能几乎是一样。但是如果迭代的元素内存占用较高，例如一个包含很多属性的 struct 结构体，那么 for 的性能将显著地高于 range，有时候甚至会有上千倍的性能差异。对于这种场景，建议使用 for，如果使用 range，建议只迭代下标，通过下标访问迭代值，这种使用方式和 for 就没有区别了。如果想使用 range 同时迭代下标和值，则需要将切片/数组的元素改为指针，才能不影响性能。</p>
+<h4 id="数组和切片区别"><a href="#数组和切片区别" class="headerlink" title="数组和切片区别"></a>数组和切片区别</h4><p>数组是不可变的数据类型，线程安全</p>
+<p>切片是动态可变的数据结构，包含长度，容量以及指向数组的应用，线程不安全</p>
+<h4 id="rune数据类型"><a href="#rune数据类型" class="headerlink" title="rune数据类型"></a>rune数据类型</h4><p>rune是Go语言中一种特殊的数据类型,它是int32的别名,几乎在所有方面等同于int32,用于区分字符值和整数值。</p>
+<p>补充：golang中的字符有两种，uint8（byte）代表ASCII的一个字符，rune代表一个utf-8字符。</p>
+<p>理解：当需要处理中文、日文或者其他复合字符时，则需要用到rune类型，rune实际是一个int32.</p>
+<h4 id="init函数"><a href="#init函数" class="headerlink" title="init函数"></a>init函数</h4><ul>
+<li>不同包的 <code>init()</code>执行顺序，按照 <code>导入包的依赖关系</code> 决定</li>
+<li><code>init()</code> 不能被其他函数调用，而自动 <code>在main函数执行前</code> 被调用</li>
+<li>执行顺序：import –&gt; const –&gt; var –&gt; init() –&gt; main()</li>
+</ul>
+<h4 id="make和new的区别"><a href="#make和new的区别" class="headerlink" title="make和new的区别"></a>make和new的区别</h4><ul>
+<li>new可以初始化所有类型，为类型申请一块内存空间并返回一个指针</li>
+<li>make只能用于map ，channel，slice初始化，返回的是类型引用</li>
+</ul>
+<h4 id="什么是协程泄露-Goroutine-Leak-？"><a href="#什么是协程泄露-Goroutine-Leak-？" class="headerlink" title="什么是协程泄露(Goroutine Leak)？"></a>什么是协程泄露(Goroutine Leak)？</h4><p>go协程正常结束后，会被gc回收，但是如果一些操作不当，就会引起协程一直处于阻塞状态或者永远运行，这种情况就是协程泄漏了，他会一直消耗资源，直到系统奔溃。泄漏的场景：</p>
+<ul>
+<li>Goroutine 内正在进行 channel/mutex 等读写操作，但由于逻辑问题，某些情况下会被一直阻塞。</li>
+<li>Goroutine 内的业务逻辑进入死循环，资源一直无法释放。</li>
+<li>Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待。</li>
+</ul>
+<p>检测工具：uber-go/goleak</p>
+<h4 id="赋值是原子操作吗？"><a href="#赋值是原子操作吗？" class="headerlink" title="赋值是原子操作吗？"></a>赋值是原子操作吗？</h4><p>不是原子操作，会有并发安全问题。设计struct赋值的数据类型 都是并发不安全的 比如slice map等</p>
+<h4 id="time-Sleep-d-和-lt-time-After-d-有何区别？"><a href="#time-Sleep-d-和-lt-time-After-d-有何区别？" class="headerlink" title="time.Sleep(d)和&lt;-time.After(d)有何区别？"></a><code>time.Sleep(d)</code>和<code>&lt;-time.After(d)</code>有何区别？</h4><p>两者都会将当前的goroutine执行暂停一段时间。 区别在于<code>time.Sleep(d)</code>函数调用将使当前的协程进入睡眠子状态，但是当前协程的<a target="_blank" rel="noopener" href="https://gfw.go101.org/article/control-flows-more.html#states-of-goroutine">（主）状态</a>依然为运行状态； 而通道接收<code>&lt;-time.After(d)</code>操作将使当前协程进入阻塞状态。</p>
+<h4 id="哪些类型不支持比较？"><a href="#哪些类型不支持比较？" class="headerlink" title="哪些类型不支持比较？"></a>哪些类型不支持比较？</h4><p>下列类型不支持比较：映射（map、切片、函数、包含不可比较字段的结构体类型、元素类型为不可比较类型的数组类型</p>
+<p>不支持比较的类型不能用做映射类型的键值类型。请注意：</p>
+<ul>
+<li>尽管映射，切片和函数值不支持比较，但是它们的值可以与类型不确定的<code>nil</code>标识符比较。</li>
+<li>如果两个接口值的动态类型相同且不可比较，那么在运行时<a target="_blank" rel="noopener" href="https://gfw.go101.org/article/interface.html#comparison">比较这两个接口的值</a>会产生一个恐慌。</li>
+</ul>
+<h4 id="为什么两个nil值有时候会不相等？"><a href="#为什么两个nil值有时候会不相等？" class="headerlink" title="为什么两个nil值有时候会不相等？"></a>为什么两个<code>nil</code>值有时候会不相等？</h4><p>一个接口值可以看作是一个包裹非接口值的盒子。被包裹在一个接口值中的非接口值的类型必须实现了此接口值的类型。 在Go中，很多种类型的类型的零值都是用<code>nil</code>来表示的。 一个什么都没包裹的接口值为一个零值接口值，即nil接口值。 一个包裹着其它非接口类型的nil值的接口值并非什么都没包裹，所以它不是（或者说它不等于）一个nil接口值。</p>
+<p>当对一个nil接口值和一个nil非接口值进行比较时（假设它们可以比较），此nil非接口值将先被转换为nil接口值的类型，然后再进行比较； 此转换的结果为一个包裹了此nil非接口值的一个副本的接口值，此接口值不是（或者说它不等于）一个nil接口值，所以此比较不相等。</p>
+<h4 id="哪些值可以被取地址，哪些值不可以被取地址？"><a href="#哪些值可以被取地址，哪些值不可以被取地址？" class="headerlink" title="哪些值可以被取地址，哪些值不可以被取地址？"></a>哪些值可以被取地址，哪些值不可以被取地址？</h4><p>以下的值是不可以寻址的：</p>
+<ul>
+<li>字符串的字节元素</li>
+<li>映射元素</li>
+<li>接口值的动态值（类型断言的结果）</li>
+<li>常量（包括有名常量和字面量）</li>
+<li>声明的包级别函数</li>
+<li>方法（用做函数值）</li>
+<li>中间结果值<ul>
+<li>函数调用</li>
+<li>显式值转换</li>
+<li>各种操作，不包含指针解引用（dereference）操作，但是包含：<ul>
+<li>通道接收操作</li>
+<li>子字符串操作</li>
+<li>子切片操作</li>
+<li>加法、减法、乘法、以及除法等等。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>以下的值是可寻址的，因此可以被取地址：变量</p>
+<p>可寻址的结构体的字段</p>
+<ul>
+<li>可寻址的数组的元素</li>
+<li>任意切片的元素（无论是可寻址切片或不可寻址切片）</li>
+<li>指针解引用（dereference）操作</li>
+</ul>
+<h4 id="为什么映射元素不可被取地址？"><a href="#为什么映射元素不可被取地址？" class="headerlink" title="为什么映射元素不可被取地址？"></a>为什么映射元素不可被取地址？</h4><p>在Go中，映射的设计保证一个映射值在内存允许的情况下可以加入任意个条目。 另外为了防止一个映射中为其条目开辟的内存段支离破碎，官方标准编译器使用了哈希表来实现映射。 并且为了保证元素索引的效率，一个映射值的底层哈希表只为其中的所有条目维护一段连续的内存段。 因此，一个映射值随着其中的条目数量逐渐增加时，其维护的连续的内存段需要不断重新开辟来增容，并把原来内存段上的条目全部复制到新开辟的内存段上。 另外，即使一个映射值维护的内存段没有增容，某些哈希表实现也可能在当前内存段中移动其中的条目。 总之，映射中的元素的地址会因为各种原因而改变。 如果映射元素可以被取地址，则Go运行时（runtime）必须在元素地址改变的时候修改所有存储了元素地址的指针值。 这极大得增加了Go编译器和运行时的实现难度，并且严重影响了程序运行效率。 因此，目前，Go中禁止取映射元素的地址。</p>
+<p>映射元素不可被取地址的另一个原因是表达式<code>aMap[key]</code>可能返回一个存储于<code>aMap</code>中的元素，也可能返回一个不存储于其中的元素零值。 这意味着表达式<code>aMap[key]</code>在<code>(&amp;aMap[key]).Modify()</code>调用执行之后可能仍然被估值为元素零值。 这将使很多人感到困惑，因此在Go中禁止取映射元素的地址。</p>
+<h4 id="函数返回局部变量的指针是否安全？"><a href="#函数返回局部变量的指针是否安全？" class="headerlink" title="函数返回局部变量的指针是否安全？"></a>函数返回局部变量的指针是否安全？</h4><p>是的，在Go中这是绝对安全的。</p>
+<p>支持栈的Go编译器将会对每个局部变量进行逃逸分析。 对于官方标准编译器来说，如果一个值可以在编译时刻被断定它在运行时刻仅会在一个协程中被使用，则此值将被开辟在（此协程的）栈上；否则此值将被开辟在堆上。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/GO/" rel="tag"># GO</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/08/19/GO%E7%9A%84channel/" rel="next" title="GO的channel">
+                <i class="fa fa-chevron-left"></i> GO的channel
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/" rel="prev" title="rabbitMQ介绍1">
+                rabbitMQ介绍1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.jpeg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#T%E5%92%8C-T%E7%9A%84%E8%B0%83%E7%94%A8%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">T和*T的调用关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#for%E5%92%8Crange%E5%8C%BA%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">for和range区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">数组和切片区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#rune%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">rune数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#init%E5%87%BD%E6%95%B0"><span class="nav-number">5.</span> <span class="nav-text">init函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#make%E5%92%8Cnew%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">6.</span> <span class="nav-text">make和new的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%8F%E7%A8%8B%E6%B3%84%E9%9C%B2-Goroutine-Leak-%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">什么是协程泄露(Goroutine Leak)？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B5%8B%E5%80%BC%E6%98%AF%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E5%90%97%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">赋值是原子操作吗？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#time-Sleep-d-%E5%92%8C-lt-time-After-d-%E6%9C%89%E4%BD%95%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">9.</span> <span class="nav-text">time.Sleep(d)和&lt;-time.After(d)有何区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E7%B1%BB%E5%9E%8B%E4%B8%8D%E6%94%AF%E6%8C%81%E6%AF%94%E8%BE%83%EF%BC%9F"><span class="nav-number">10.</span> <span class="nav-text">哪些类型不支持比较？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%A4%E4%B8%AAnil%E5%80%BC%E6%9C%89%E6%97%B6%E5%80%99%E4%BC%9A%E4%B8%8D%E7%9B%B8%E7%AD%89%EF%BC%9F"><span class="nav-number">11.</span> <span class="nav-text">为什么两个nil值有时候会不相等？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E5%80%BC%E5%8F%AF%E4%BB%A5%E8%A2%AB%E5%8F%96%E5%9C%B0%E5%9D%80%EF%BC%8C%E5%93%AA%E4%BA%9B%E5%80%BC%E4%B8%8D%E5%8F%AF%E4%BB%A5%E8%A2%AB%E5%8F%96%E5%9C%B0%E5%9D%80%EF%BC%9F"><span class="nav-number">12.</span> <span class="nav-text">哪些值可以被取地址，哪些值不可以被取地址？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%A0%E5%B0%84%E5%85%83%E7%B4%A0%E4%B8%8D%E5%8F%AF%E8%A2%AB%E5%8F%96%E5%9C%B0%E5%9D%80%EF%BC%9F"><span class="nav-number">13.</span> <span class="nav-text">为什么映射元素不可被取地址？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E7%9A%84%E6%8C%87%E9%92%88%E6%98%AF%E5%90%A6%E5%AE%89%E5%85%A8%EF%BC%9F"><span class="nav-number">14.</span> <span class="nav-text">函数返回局部变量的指针是否安全？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blossom</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
