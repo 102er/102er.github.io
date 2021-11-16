@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="git," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,20 +79,18 @@
 
 
 
-<meta name="description" content="代码回滚git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。 git reset回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：    看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit">
+<meta name="description" content="概述grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。 介绍protoc指令&#96; 1234protoc	--proto_path&#x3D;api&#x2F;v1 \        -I&#x3D;api">
 <meta property="og:type" content="article">
-<meta property="og:title" content="git版本回退">
-<meta property="og:url" content="http://example.com/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/index.html">
+<meta property="og:title" content="protoc使用">
+<meta property="og:url" content="http://example.com/2021/11/12/protoc%E4%BD%BF%E7%94%A8/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="代码回滚git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。 git reset回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：    看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit">
+<meta property="og:description" content="概述grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。 介绍protoc指令&#96; 1234protoc	--proto_path&#x3D;api&#x2F;v1 \        -I&#x3D;api">
 <meta property="og:locale">
-<meta property="og:image" content="https://102er.github.io/images/git-reset-log.png">
-<meta property="article:published_time" content="2021-10-10T14:05:14.000Z">
-<meta property="article:modified_time" content="2021-10-20T03:51:17.719Z">
+<meta property="article:published_time" content="2021-11-12T09:24:00.000Z">
+<meta property="article:modified_time" content="2021-11-16T08:18:51.297Z">
 <meta property="article:author" content="blossom">
-<meta property="article:tag" content="git">
+<meta property="article:tag" content="go,golang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://102er.github.io/images/git-reset-log.png">
 
 
 
@@ -122,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://example.com/2021/10/10/git版本回退/"/>
+  <link rel="canonical" href="http://example.com/2021/11/12/protoc使用/"/>
 
 
 
 
 
-  <title>git版本回退 | 102er</title>
+  <title>protoc使用 | 102er</title>
   
 
 
@@ -255,7 +253,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/12/protoc%E4%BD%BF%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="">
@@ -272,7 +270,7 @@
 
         
         
-          <h2 class="post-title" itemprop="name headline">git版本回退</h2>
+          <h2 class="post-title" itemprop="name headline">protoc使用</h2>
         
 
         <div class="post-meta">
@@ -284,8 +282,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-10T22:05:14+08:00">
-                2021-10-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-11-12T17:24:00+08:00">
+                2021-11-12
               </time>
             
 
@@ -322,27 +320,15 @@
       
 
       
-        <h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
-<h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
-<ul>
-<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
-</ul>
-<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
-<ol>
-<li>git reset –hard  a94308f  #回退到这个版本 </li>
-<li>git cherry-pick fb9e36f</li>
-<li>git cherry-pick 6d60f55</li>
-<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
-<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
-</ol>
-<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 帮助我们解决多量commit的场景。</p>
-<ul>
-<li>– hard  要慎用此参数，它会删除回退点之前的所有信息。</li>
-</ul>
-<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：</p>
-<p><code>git revert -n 057c752</code></p>
-<p>它仅仅只是踢掉这个commit，其他的commit还是在的。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><p>`</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
+
+<p>`</p>
+<p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
+<p>— 很多情况下，我们会在一个proto文件里面import其他proto文件，就需要指定这个路径，使protoc可以找到依赖。</p>
+<p><strong>–xxx_out=OUT_DIR</strong>：指定使用哪个插件生成相应语言的代码。go需要自己安装插件，一般会选择官方的protoc-gen-go，如果对自定义要求高，可以了解protoc-gen-gogo；</p>
+<p>  **  @<filename> ** ：表示要生成的proto文件，可以是一个目录，它会把目录下所有proto文件生成对应的代码。</p>
 
       
     </div>
@@ -358,12 +344,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/git/" rel="tag"># git</a>
-          
-        </div>
-      
 
       
       
@@ -373,8 +353,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/" rel="next" title="mysql索引介绍1">
-                <i class="fa fa-chevron-left"></i> mysql索引介绍1
+              <a href="/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/" rel="next" title="git版本回退">
+                <i class="fa fa-chevron-left"></i> git版本回退
               </a>
             
           </div>
@@ -382,10 +362,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/" rel="prev" title="protoc使用">
-                protoc使用 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -512,7 +488,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%9B%9E%E6%BB%9A"><span class="nav-number">1.</span> <span class="nav-text">代码回滚</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#git-reset"><span class="nav-number">1.1.</span> <span class="nav-text">git reset</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#git-revert"><span class="nav-number">1.2.</span> <span class="nav-text">git revert</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#protoc%E6%8C%87%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">protoc指令</span></a></li></ol></li></ol></div>
             
 
           </div>
