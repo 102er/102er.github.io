@@ -88,7 +88,7 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://102er.github.io/images/git-reset-log.png">
 <meta property="article:published_time" content="2021-10-10T14:05:14.000Z">
-<meta property="article:modified_time" content="2021-10-20T03:51:17.719Z">
+<meta property="article:modified_time" content="2021-11-16T10:42:02.202Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="git">
 <meta name="twitter:card" content="summary">
@@ -329,19 +329,28 @@
 </ul>
 <p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
 <ol>
-<li>git reset –hard  a94308f  #回退到这个版本 </li>
-<li>git cherry-pick fb9e36f</li>
-<li>git cherry-pick 6d60f55</li>
+<li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
+<li>git cherry-pick fb9e36f    #找回消失的提交记录</li>
+<li>git cherry-pick 6d60f55   #找回消失的提交记录</li>
 <li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
 <li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
 </ol>
-<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 帮助我们解决多量commit的场景。</p>
+<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 互动模式，帮助我们解决多量commit的场景。</p>
+<p>常用命令：</p>
 <ul>
-<li>– hard  要慎用此参数，它会删除回退点之前的所有信息。</li>
+<li>使用 <code>git reset HEAD^</code> 回到上一個 patch（檔案內容不清空）</li>
+<li>使用 <code>git reset --hard HEAD^</code> 回到上一個 patch，並且強制清除修改的內容 </li>
+<li>使用 <code>git reset --hard &lt;commit id&gt;</code> 直接 reset 成指定的 patch</li>
+<li>使用 git reset –soft HEAD^  回到前一個 patch，但保持檔案狀態為 *<strong>Changes to be committed*</strong></li>
+<li><strong>– hard  要慎用此参数，它会删除回退点之前的所有修改内容。</strong>如果代码未提交，那就很难补救了，如果代码已经提交，那可以通过找到commit id 找回代码</li>
 </ul>
-<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：</p>
-<p><code>git revert -n 057c752</code></p>
-<p>它仅仅只是踢掉这个commit，其他的commit还是在的。</p>
+<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：<code>git revert -n 057c752</code>  它可以帮忙我们移除一个commit；它仅仅只是踢掉这个commit，其他的commit还是在的。常用命令：</p>
+<ul>
+<li>使用 <code>git revert &lt;commit id&gt;</code> 還原指定的 patch</li>
+<li>使用 <code>git revert --continue</code> 告知 git 已經解完衝突</li>
+<li>使用 <code>git revert --abort</code> 來要放棄這次 revert</li>
+<li>不适用于合并操作的commit</li>
+</ul>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
 
       
