@@ -89,8 +89,9 @@
 <meta property="og:image" content="https://102er.github.io/images/osi-model.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-bw.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
+<meta property="og:image" content="https://102er.github.io/images/tcp-4hs.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-06T10:59:27.602Z">
+<meta property="article:modified_time" content="2021-12-06T12:04:30.440Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
@@ -432,7 +433,16 @@
 </li>
 </ul>
 <h3 id="SYN-FLOOD攻击"><a href="#SYN-FLOOD攻击" class="headerlink" title="SYN FLOOD攻击"></a>SYN FLOOD攻击</h3><p>伪造大量的源ip地址，分别向服务端发送大量的syn包，服务端返回的SYN/ACK包，因为源地址是伪造的，所以不会有应答，服务端没有收到应答，会重试并且等待一个syn time，如果超时则丢弃这个连接。这种半开连接会消耗服务端的资源，导致服务端无法正常服务。</p>
-<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
+<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2><p><img src="https://102er.github.io/images/tcp-4hs.png" alt="osi"></p>
+<ol>
+<li>客户端发出连接释放报文，并停止发送数据。此时标志位：FIN=1，请求关闭连接。序号字段 seq = x (等于之前发送的所有数据的最后一个字节的序号加一)，然后客户端会进入 FIN-WAIT-1 状态，等待来自服务器的确认报文。<u>TCP规定FIN报文段即使不携带数据，也要消耗一个序号。</u></li>
+<li>服务器收到 FIN 报文后，发回确认报文。标志位：ACK = 1，确认序号位： ack = x + 1，并带上自己的序号 seq = y，然后服务器就进入 CLOSE-WAIT 状态。服务器还会通知上层的应用程序对方已经释放连接，此时 TCP 处于半关闭状态，即客户端没有数据要发送了，但是服务端发送数据，客户端仍然能接收。</li>
+<li>客户端接收到服务端的确认报文之后，客户端进入第二个FIN-WAIT2状态，等待服务端发送连接释放报文。</li>
+<li>服务器将最后数据发送完毕后，就向客户端发送连接释放报文。标志位：FIN=1，ACK=1，并携带seq和ack序号值，随后服务器进入 LAST-ACK 状态，等待来自客户端的确认报文段。</li>
+<li>客户端收到来自服务器的 FIN 报文段后，向服务器发送确认报文。标志位：ACK=1,并携带ack=z+1和seq=x+1的序号值，随后进入 TIME-WAIT 状态。注意，此时tcp连接还没有释放，必须等待 2MSL(2 * Maximum Segment Lifetime，两倍的报文段最大存活时间) 的时间后，客户端才会进入closed状态。</li>
+<li>服务端接收到客户端的确认报文，立即进入closed状态。</li>
+</ol>
+
       
     </div>
     
