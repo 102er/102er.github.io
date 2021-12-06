@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://102er.github.io/images/tcp-bw.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-06T08:55:43.680Z">
+<meta property="article:modified_time" content="2021-12-06T10:37:54.862Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
@@ -379,9 +379,22 @@
 <ol>
 <li>第一次握手：客户端向服务端发送连接请求报文。此时标志位：SYN=1，同时会初始化一个序列号x 填充到 seq序号位。发送完，客户端进入syn-send状态，等待服务端的确认。<u>TCP规定SYN=1的报文不能携带数据，但需要消耗一个序号。</u></li>
 <li>第二次握手：服务端接收报文之后，如果同意连接，会发出确认报文，包含标志位：SYN=1,ACK=1，确认序号ack=x+1(<u>x是客户端发送的seq序号值，序号+1代表服务端期望下次接收到客户的数据序号为x+1</u>)，序号seq=y。发送完报文，服务端进入syn-received状态。<u>TCP规定SYN=1的报文不能携带数据，但需要消耗一个序号。</u></li>
-<li>第三次握手：客户端接收到确认报文，还需要向服务端给出确认报文，包含标志位：ACK=1，ack=y+1，seq=x+1，此时，tcp连接建立，客户端进入established。<u>TCP规定，ACK报文段可以携带数据，但如果不携带数据，则不消化序号。</u>当服务端接收到客户端的确认报文后也进入established。此后，双方就可以开始通信了。</li>
+<li>第三次握手：客户端接收到确认报文，还需要向服务端给出确认报文，包含标志位：ACK=1，确认序号ack=y+1，序号seq=x+1，此时，tcp连接建立，客户端进入established。<u>TCP规定，ACK报文段可以携带数据，但如果不携带数据，则不消化序号。</u>当服务端接收到客户端的确认报文后也进入established。此后，双方就可以开始通信了。</li>
 </ol>
-<h3 id="为什么三次握手"><a href="#为什么三次握手" class="headerlink" title="为什么三次握手"></a>为什么三次握手</h3><h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
+<h3 id="为什么三次握手？"><a href="#为什么三次握手？" class="headerlink" title="为什么三次握手？"></a>为什么三次握手？</h3><ul>
+<li><p>防止已过期的连接请求报文突然又传到服务器，浪费服务器资源</p>
+</li>
+<li><p>三次握手才能确认让双方确认彼此的发送和接收能力</p>
+<pre><code> -  第一次握手，服务端可以确认自己的&lt;u&gt;接收&lt;/u&gt;能力和客户端的&lt;u&gt;发送&lt;/u&gt;能力 
+</code></pre>
+<p>​     -  第二次握手，客户端可以确认自己的<u>收发</u>能力和服务端的<u>收发</u>能力 </p>
+<p>​     -  第三次握手，前两次握手，服务端并不能知道自己的<u>发送</u>能力和客户端的<u>接收</u>能力是否正常。第三次握手，服务端收到了客户端第二次握手的回应，从服务端角度可以确认自己第二次握手发送的包发送出去且客户端接收了，所以确认了自己的<u>收发</u>能力和客户端的<u>收发</u>能力。</p>
+</li>
+<li><p>告知对方自己的初始序号值，并确认收到对方的初始序号值</p>
+<p>​     -  三次握手，才能保证服务端发送的seq初始序号得到确认。</p>
+</li>
+</ul>
+<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
       
     </div>
     
@@ -559,7 +572,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a></li></ol></div>
             
 
           </div>
