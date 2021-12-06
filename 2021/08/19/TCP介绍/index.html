@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://102er.github.io/images/tcp-bw.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-06T10:37:54.862Z">
+<meta property="article:modified_time" content="2021-12-06T10:56:05.052Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
@@ -383,6 +383,7 @@
 </ol>
 <h3 id="为什么三次握手？"><a href="#为什么三次握手？" class="headerlink" title="为什么三次握手？"></a>为什么三次握手？</h3><ul>
 <li><p>防止已过期的连接请求报文突然又传到服务器，浪费服务器资源</p>
+<p>​     -  第三次握手可以对失效请求报文，进行确认，当他接收了失效请求报文会回复，如果客户端是关闭状态的，那没办法进行确认请求，所以服务端收不到客户端确认报文，会判断客户端并没有提交请求连接。（<strong>失效请求</strong>：客户端发送了第一次握手，但是网络因素滞留。客户端迟迟没有接收到服务端的确认报文，会再次发送握手请求。那么此时，第一次发送的握手请求就是失效的。）</p>
 </li>
 <li><p>三次握手才能确认让双方确认彼此的发送和接收能力</p>
 <pre><code> -  第一次握手，服务端可以确认自己的&lt;u&gt;接收&lt;/u&gt;能力和客户端的&lt;u&gt;发送&lt;/u&gt;能力 
@@ -391,9 +392,11 @@
 <p>​     -  第三次握手，前两次握手，服务端并不能知道自己的<u>发送</u>能力和客户端的<u>接收</u>能力是否正常。第三次握手，服务端收到了客户端第二次握手的回应，从服务端角度可以确认自己第二次握手发送的包发送出去且客户端接收了，所以确认了自己的<u>收发</u>能力和客户端的<u>收发</u>能力。</p>
 </li>
 <li><p>告知对方自己的初始序号值，并确认收到对方的初始序号值</p>
-<p>​     -  三次握手，才能保证服务端发送的seq初始序号得到确认。</p>
+<pre><code>  -  三次握手，才能保证服务端发送的seq初始序号得到确认。
+</code></pre>
 </li>
 </ul>
+<h3 id="SYN-FLOOD攻击"><a href="#SYN-FLOOD攻击" class="headerlink" title="SYN FLOOD攻击"></a>SYN FLOOD攻击</h3><p>伪造大量的源ip地址，分别向服务端发送大量的syn包，服务端返回的SYN/ACK包，因为源地址是伪造的，所以不会有应答，服务端没有收到应答，会重试并且等待一个syn time，如果超时则丢弃这个连接。这种半开连接会消耗服务端的资源，导致服务端无法正常服务。</p>
 <h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
       
     </div>
@@ -572,7 +575,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-FLOOD%E6%94%BB%E5%87%BB"><span class="nav-number">3.2.</span> <span class="nav-text">SYN FLOOD攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a></li></ol></div>
             
 
           </div>
