@@ -618,7 +618,7 @@
 <li>第二次握手：服务端接收报文之后，如果同意连接，会发出确认报文，包含标志位：SYN=1,ACK=1，确认序号ack=x+1(<u>x是客户端发送的seq序号值，序号+1代表服务端期望下次接收到客户的数据序号为x+1</u>)，序号seq=y。发送完报文，服务端进入syn-received状态。<u>TCP规定SYN=1的报文不能携带数据，但需要消耗一个序号。</u></li>
 <li>第三次握手：客户端接收到确认报文，还需要向服务端给出确认报文，包含标志位：ACK=1，ack=y+1，seq=x+1，此时，tcp连接建立，客户端进入established。<u>TCP规定，ACK报文段可以携带数据，但如果不携带数据，则不消化序号。</u>当服务端接收到客户端的确认报文后也进入established。此后，双方就可以开始通信了。</li>
 </ol>
-<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
+<h3 id="为什么三次握手"><a href="#为什么三次握手" class="headerlink" title="为什么三次握手"></a>为什么三次握手</h3><h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>
           
         
       
