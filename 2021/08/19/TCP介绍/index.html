@@ -20,18 +20,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。  TCP报文段  端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口">
+<meta name="description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP介绍">
 <meta property="og:url" content="http://example.com/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。  TCP报文段  端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口">
+<meta property="og:description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://102er.github.io/images/osi-model.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-bw.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-08T03:59:59.908Z">
+<meta property="article:modified_time" content="2021-12-08T13:42:51.151Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
@@ -247,7 +247,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-08 11:59:59" itemprop="dateModified" datetime="2021-12-08T11:59:59+08:00">2021-12-08</time>
+      <time title="修改时间：2021-12-08 21:42:51" itemprop="dateModified" datetime="2021-12-08T21:42:51+08:00">2021-12-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,6 +276,8 @@
 <li>基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。</li>
 <li>可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。</li>
 </ul>
+<span id="more"></span>
+
 <h2 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h2><p><img src="https://102er.github.io/images/tcp-bw.png" alt="osi"></p>
 <ul>
 <li>端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口号+ip可以组成一个socket</li>
