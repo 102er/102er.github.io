@@ -157,6 +157,49 @@
       </tags>
   </entry>
   <entry>
+    <title>git版本回退</title>
+    <url>/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/</url>
+    <content><![CDATA[<h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
+<h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
+<ul>
+<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
+</ul>
+<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
+<ol>
+<li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
+<li>git cherry-pick fb9e36f    #找回消失的提交记录</li>
+<li>git cherry-pick 6d60f55   #找回消失的提交记录</li>
+<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
+<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
+</ol>
+<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 互动模式，帮助我们解决多量commit的场景。</p>
+<p>常用命令：</p>
+<ul>
+<li>使用 <code>git reset HEAD^</code> 回到上一個 patch（檔案內容不清空）</li>
+<li>使用 <code>git reset --hard HEAD^</code> 回到上一個 patch，並且強制清除修改的內容 </li>
+<li>使用 <code>git reset --hard &lt;commit id&gt;</code> 直接 reset 成指定的 patch</li>
+<li>使用 git reset –soft HEAD^  回到前一個 patch，但保持檔案狀態為 *<strong>Changes to be committed*</strong></li>
+<li><strong>– hard  要慎用此参数，它会删除回退点之前的所有修改内容。</strong>如果代码未提交，那就很难补救了，如果代码已经提交，那可以通过找到commit id 找回代码</li>
+</ul>
+<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：<code>git revert -n 057c752</code>  它可以帮忙我们移除一个commit；它仅仅只是踢掉这个commit，其他的commit还是在的。常用命令：</p>
+<ul>
+<li>使用 <code>git revert &lt;commit id&gt;</code> 還原指定的 patch</li>
+<li>使用 <code>git revert --continue</code> 告知 git 已經解完衝突</li>
+<li>使用 <code>git revert --abort</code> 來要放棄這次 revert</li>
+<li>不适用于合并操作的commit</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql索引介绍1</title>
+    <url>/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>TCP介绍</title>
     <url>/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：</p>
@@ -211,66 +254,12 @@
 </li>
 </ul>
 <h3 id="SYN-FLOOD攻击"><a href="#SYN-FLOOD攻击" class="headerlink" title="SYN FLOOD攻击"></a>SYN FLOOD攻击</h3><p>伪造大量的源ip地址，分别向服务端发送大量的syn包，服务端返回的SYN/ACK包，因为源地址是伪造的，所以不会有应答，服务端没有收到应答，会重试并且等待一个syn time，如果超时则丢弃这个连接。这种半开连接会消耗服务端的资源，导致服务端无法正常服务。</p>
-<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2><p><img src="https://102er.github.io/images/tcp-4hs.png" alt="osi"></p>
-<ol>
-<li>客户端发出连接释放报文，并停止发送数据。此时标志位：FIN=1，请求关闭连接。序号字段 seq = x (等于之前发送的所有数据的最后一个字节的序号加一)，然后客户端会进入 FIN-WAIT-1 状态，等待来自服务器的确认报文。<u>TCP规定FIN报文段即使不携带数据，也要消耗一个序号。</u></li>
-<li>服务器收到 FIN 报文后，发回确认报文。标志位：ACK = 1，确认序号位： ack = x + 1，并带上自己的序号 seq = y，然后服务器就进入 CLOSE-WAIT 状态。服务器还会通知上层的应用程序对方已经释放连接，此时 TCP 处于半关闭状态，即客户端没有数据要发送了，但是服务端发送数据，客户端仍然能接收。</li>
-<li>客户端接收到服务端的确认报文之后，客户端进入第二个FIN-WAIT2状态，等待服务端发送连接释放报文。</li>
-<li>服务器将最后数据发送完毕后，就向客户端发送连接释放报文。标志位：FIN=1，ACK=1，并携带seq和ack序号值，随后服务器进入 LAST-ACK 状态，等待来自客户端的确认报文段。</li>
-<li>客户端收到来自服务器的 FIN 报文段后，向服务器发送确认报文。标志位：ACK=1,并携带ack=z+1和seq=x+1的序号值，随后进入 TIME-WAIT 状态。注意，此时tcp连接还没有释放，必须等待 2MSL(2 * Maximum Segment Lifetime，两倍的报文段最大存活时间) 的时间后，客户端才会进入closed状态。</li>
-<li>服务端接收到客户端的确认报文，立即进入closed状态。</li>
-</ol>
-<h3 id="客户端为什么还要等待2MSL？"><a href="#客户端为什么还要等待2MSL？" class="headerlink" title="客户端为什么还要等待2MSL？"></a>客户端为什么还要等待2MSL？</h3><p>MSL(Maximum Segment Lifetime)，tcp允许不同的实现可以设置不同的MSL值。去向ACK消息最大存活时间(MSL)+来自FIN消息的最大存活时间(MSL)  =  2MSL</p>
-<ul>
-<li>保证客户端发送的最后一个ACK报文能够到达服务器；网络并不总是可靠的，如果客户端发送的 ACK 报文段丢失，服务器在接收不到 ACK 的情况下会一直重发 FIN 报文段，这显然不是我们想要的。因此客户端为了确保服务器收到了 ACK，会设置一个定时器，并在 TIME-WAIT 状态等待 2MSL 的时间，如果在此期间又收到了来自服务器的 FIN 报文段，那么客户端会重新设置计时器并再次等待 2MSL 的时间，</li>
-<li>登录2MSL时间，客户端可以放心释放tcp占用的资源和端口。2MSL时间，可以保证老的tcp连接的活跃报文全部close，这样保证客户端重新发起的连接，不会和旧连接有数据冲突。</li>
-</ul>
-<h3 id="为什么-TCP-关闭连接为什么要四次而不是三次？"><a href="#为什么-TCP-关闭连接为什么要四次而不是三次？" class="headerlink" title="为什么 TCP 关闭连接为什么要四次而不是三次？"></a>为什么 TCP 关闭连接为什么要四次而不是三次？</h3><p>服务器在收到客户端的 FIN 报文段后，可能还有一些数据要传输，所以不能马上关闭连接，但是会做出应答，返回 ACK 报文段，接下来可能会继续发送数据，在数据发送完后，服务器会向客户单发送 FIN 报文，表示数据已经发送完毕，请求关闭连接，然后客户端再做出应答，因此一共需要四次挥手。</p>
-<h3 id="如果双方已经建立连接，但是客户端出现故障怎么办？"><a href="#如果双方已经建立连接，但是客户端出现故障怎么办？" class="headerlink" title="如果双方已经建立连接，但是客户端出现故障怎么办？"></a>如果双方已经建立连接，但是客户端出现故障怎么办？</h3><p>客户端故障，服务器不可能一直等待下去，浪费系统资源。TCP设有一个保活计时器，服务器每次收一个客户端请求就会复位这个计时器。如果服务端长时间没有收到客户端的请求，就会发送一个探测报文段，并每隔75s发送一次，连续10个探测报文都没有响应，服务器就会判断客户端故障，关闭连接。</p>
-<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><h2 id="TCP-粘包与拆包"><a href="#TCP-粘包与拆包" class="headerlink" title="TCP 粘包与拆包"></a>TCP 粘包与拆包</h2>]]></content>
+<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2>]]></content>
       <categories>
         <category>网络</category>
       </categories>
       <tags>
         <tag>TCP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>git版本回退</title>
-    <url>/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/</url>
-    <content><![CDATA[<h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
-<h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
-<ul>
-<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
-</ul>
-<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
-<ol>
-<li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
-<li>git cherry-pick fb9e36f    #找回消失的提交记录</li>
-<li>git cherry-pick 6d60f55   #找回消失的提交记录</li>
-<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
-<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
-</ol>
-<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 互动模式，帮助我们解决多量commit的场景。</p>
-<p>常用命令：</p>
-<ul>
-<li>使用 <code>git reset HEAD^</code> 回到上一個 patch（檔案內容不清空）</li>
-<li>使用 <code>git reset --hard HEAD^</code> 回到上一個 patch，並且強制清除修改的內容 </li>
-<li>使用 <code>git reset --hard &lt;commit id&gt;</code> 直接 reset 成指定的 patch</li>
-<li>使用 git reset –soft HEAD^  回到前一個 patch，但保持檔案狀態為 *<strong>Changes to be committed*</strong></li>
-<li><strong>– hard  要慎用此参数，它会删除回退点之前的所有修改内容。</strong>如果代码未提交，那就很难补救了，如果代码已经提交，那可以通过找到commit id 找回代码</li>
-</ul>
-<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：<code>git revert -n 057c752</code>  它可以帮忙我们移除一个commit；它仅仅只是踢掉这个commit，其他的commit还是在的。常用命令：</p>
-<ul>
-<li>使用 <code>git revert &lt;commit id&gt;</code> 還原指定的 patch</li>
-<li>使用 <code>git revert --continue</code> 告知 git 已經解完衝突</li>
-<li>使用 <code>git revert --abort</code> 來要放棄這次 revert</li>
-<li>不适用于合并操作的commit</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -290,16 +279,6 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>mysql索引介绍1</title>
-    <url>/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>prometheus</title>
-    <url>/2021/08/19/prometheus/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>protoc使用</title>
@@ -327,8 +306,8 @@
 ]]></content>
   </entry>
   <entry>
-    <title>rabbitMQ介绍1</title>
-    <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/</url>
+    <title>prometheus</title>
+    <url>/2021/08/19/prometheus/</url>
     <content><![CDATA[]]></content>
   </entry>
   <entry>
@@ -349,6 +328,11 @@
   <entry>
     <title>服务部署</title>
     <url>/2021/08/19/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>rabbitMQ介绍1</title>
+    <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/</url>
     <content><![CDATA[]]></content>
   </entry>
 </search>
