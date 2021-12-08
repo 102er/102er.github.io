@@ -82,15 +82,18 @@
       </tags>
   </entry>
   <entry>
-    <title>GO的面试题</title>
+    <title>GO 100问</title>
     <url>/2021/08/19/GO%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
-    <content><![CDATA[<h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
+    <content><![CDATA[<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>go的常见问答</p>
+<h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
 <ul>
 <li>一个<code>T</code>类型的值可以调用为<code>*T</code>类型声明的方法，但是仅当此<code>T</code>的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此<code>T</code>值的地址。 因为不是任何<code>T</code>值都是可寻址的，所以并非任何<code>T</code>值都能够调用为类型<code>*T</code>声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址）</li>
 <li>一个<code>*T</code>类型的值可以调用为类型<code>T</code>声明的方法。 这是因为解引用指针总是合法的。 这种便利不仅仅是一个语法糖，它也是一种固有的规则。</li>
 </ul>
 <p>所以很合理的， <code>*T</code>的方法集总是<code>T</code>方法集的超集，但反之不然。</p>
 <p>事实上，你可以认为对于每一个为类型<code>T</code>声明的方法，编译器都会为类型<code>*T</code>自动隐式声明一个同名和同签名的方法。</p>
+<span id="more"></span>
+
 <h4 id="for和range区别"><a href="#for和range区别" class="headerlink" title="for和range区别"></a>for和range区别</h4><p>range 在迭代过程中返回的是迭代值的拷贝，如果每次迭代的元素的内存占用很低，那么 for 和 range 的性能几乎是一样。但是如果迭代的元素内存占用较高，例如一个包含很多属性的 struct 结构体，那么 for 的性能将显著地高于 range，有时候甚至会有上千倍的性能差异。对于这种场景，建议使用 for，如果使用 range，建议只迭代下标，通过下标访问迭代值，这种使用方式和 for 就没有区别了。如果想使用 range 同时迭代下标和值，则需要将切片/数组的元素改为指针，才能不影响性能。</p>
 <h4 id="数组和切片区别"><a href="#数组和切片区别" class="headerlink" title="数组和切片区别"></a>数组和切片区别</h4><p>数组是不可变的数据类型，线程安全</p>
 <p>切片是动态可变的数据结构，包含长度，容量以及指向数组的应用，线程不安全</p>
@@ -280,11 +283,6 @@
 
 <p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>mysql索引介绍1</title>
-    <url>/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>prometheus</title>
