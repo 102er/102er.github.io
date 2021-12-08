@@ -4,6 +4,8 @@
     <title>GO的GMP模型</title>
     <url>/2021/08/19/GO%E7%9A%84GMP%E6%A8%A1%E5%9E%8B/</url>
     <content><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
+<span id="more"></span>
+
 <h4 id="并发-amp-并行"><a href="#并发-amp-并行" class="headerlink" title="并发&amp;并行"></a><strong>并发</strong>&amp;并行</h4><p><strong>并发：</strong>某一段时间，几个程序在同一个cpu上运行，但任意一个时间点只有一个程序在运行。解决程序排队等待的问题，如果一个程序发生阻塞，那么其他程序仍可以正常的执行。站在cpu的角度上，并发实际也是串行的。</p>
 <p><strong>并行</strong>：需要硬件支持，系统必须具备多个cpu，才能有并行的能力。不同cpu在同一时间运行不同程序，互不抢占资源，实现真正的同时执行。</p>
 <p><strong>区别</strong>：并发只是在宏观上给人感觉多个程序在同时运行，但实际单cpu系统中，每一时刻只有一个程序在运行。而并行关键是多核【同时】执行。</p>
@@ -38,7 +40,9 @@
   <entry>
     <title>GO的channel</title>
     <url>/2021/08/19/GO%E7%9A%84channel/</url>
-    <content><![CDATA[<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列</p>
+    <content><![CDATA[<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列。</p>
+<span id="more"></span>
+
 <h3 id="通信交互"><a href="#通信交互" class="headerlink" title="通信交互"></a>通信交互</h3><h4 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a><strong>发送消息</strong></h4><ol>
 <li>持有锁</li>
 <li>入队，拷贝要发送的数据<ol>
@@ -166,6 +170,8 @@
 <li>基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。</li>
 <li>可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。</li>
 </ul>
+<span id="more"></span>
+
 <h2 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h2><p><img src="https://102er.github.io/images/tcp-bw.png" alt="osi"></p>
 <ul>
 <li>端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口号+ip可以组成一个socket</li>
@@ -289,6 +295,8 @@
     <title>protoc使用</title>
     <url>/2021/11/12/protoc%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
+<span id="more"></span>
+
 <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
 
 <p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
@@ -309,11 +317,6 @@
 <li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
 </ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>rabbitMQ介绍1</title>
-    <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>redis</title>

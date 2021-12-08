@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -239,7 +239,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-11-16 16:44:28" itemprop="dateModified" datetime="2021-11-16T16:44:28+08:00">2021-11-16</time>
+      <time title="修改时间：2021-12-08 22:12:46" itemprop="dateModified" datetime="2021-12-08T22:12:46+08:00">2021-12-08</time>
     </span>
 
   
@@ -253,26 +253,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
-
-<p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
-<p>— 很多情况下，我们会在一个proto文件里面import其他proto文件，就需要指定这个路径，使protoc可以找到依赖。</p>
-<p><strong>–xxx_out=OUT_DIR</strong>：指定使用哪个插件生成相应语言的代码。go需要自己安装插件，一般会选择官方的protoc-gen-go 【–go_out=XXXX】，如果对自定义要求高，可以了解protoc-gen-gogo 【–gogo_out=XXXX】；<code>--xxx_out</code>主要的两个参数为<code>plugins</code> 和 <code>paths</code>，分别表示生成Go代码所使用的插件，以及生成的Go代码的位置。<code>--go_out</code>的写法是，参数之间用逗号隔开，最后加上冒号来指定代码的生成位置，比如<code>--go_out=plugins=grpc,paths=import:.</code></p>
-<ul>
-<li><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</li>
-<li>​    <code>plugins</code>参数有不带grpc和带grpc两种（应该还有其它的，目前知道的有这两种），两者的区别如下，带grpc的会多一些跟gRPC相关的代码，实现gRPC通信：</li>
-</ul>
-<p><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</p>
-<p>  **  @<filename> ** ：表示要生成的proto文件，可以是一个目录，它会把目录下所有proto文件生成对应的代码。</p>
-<h3 id="proto文件"><a href="#proto文件" class="headerlink" title="proto文件"></a>proto文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package helloWorld;</span><br><span class="line"></span><br><span class="line">option go_package=&quot;api/v1&quot;;</span><br><span class="line"></span><br><span class="line">service Greeter &#123;</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>syntax：指定proto版本，默认是proto2进行编译</li>
-<li><code>package</code>：是proto文件的命名空间，避免我们定义的service、message出现冲突。</li>
-<li>go_package：生成go语言对应的包路径，对应go的包名，它的设置上需要和–go_out==xxx相同，保证go能够被正确引用。（当然，不一样也可以，这样需要保证go_out目录下只有这个包，不然就会出现冲突，所以，我们设置上一般保证相同，减少不必要的问题）</li>
-<li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -684,76 +672,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別失望，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/" class="post-title-link" itemprop="url">rabbitMQ介绍1</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-08-19 14:30:11" itemprop="dateCreated datePublished" datetime="2021-08-19T14:30:11+08:00">2021-08-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-09-01 12:35:18" itemprop="dateModified" datetime="2021-09-01T12:35:18+08:00">2021-09-01</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -996,6 +914,84 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-08 22:13:04" itemprop="dateModified" datetime="2021-12-08T22:13:04+08:00">2021-12-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/19/GO%E7%9A%84channel/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別失望，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" class="post-title-link" itemprop="url">二分查找</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-19 14:28:46" itemprop="dateCreated datePublished" datetime="2021-08-19T14:28:46+08:00">2021-08-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
       <time title="修改时间：2021-09-01 12:35:18" itemprop="dateModified" datetime="2021-09-01T12:35:18+08:00">2021-09-01</time>
     </span>
 
@@ -1009,41 +1005,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列</p>
-<h3 id="通信交互"><a href="#通信交互" class="headerlink" title="通信交互"></a>通信交互</h3><h4 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a><strong>发送消息</strong></h4><ol>
-<li>持有锁</li>
-<li>入队，拷贝要发送的数据<ol>
-<li>找到是否有正在阻塞的接收方，是则直接发送</li>
-<li>找到是否有空余的缓存，是则存入</li>
-<li>阻塞直到被唤醒</li>
-</ol>
-</li>
-<li>释放锁</li>
-</ol>
-<h4 id="接收消息"><a href="#接收消息" class="headerlink" title="接收消息"></a><strong>接收消息</strong></h4><ol>
-<li>上锁</li>
-<li>从缓存中出队，拷贝要接收的数据<ol>
-<li>如果 Channel 已被关闭，且 Channel 没有数据，立刻返回</li>
-<li>如果存在正在阻塞的发送方，说明缓存已满，从缓存队头取一个数据，再复始一个阻塞的发送方</li>
-<li>否则，检查缓存，如果缓存中仍有数据，则从缓存中读取，读取过程会将队列中的数据拷贝一份到接收方的执行栈中</li>
-<li>没有能接受的数据，阻塞当前的接收方 Goroutine</li>
-</ol>
-</li>
-<li>解锁</li>
-</ol>
-<h3 id="通道关闭"><a href="#通道关闭" class="headerlink" title="通道关闭"></a>通道关闭</h3><h4 id="channel关闭后的读写"><a href="#channel关闭后的读写" class="headerlink" title="channel关闭后的读写"></a><strong>channel关闭后的读写</strong></h4><ul>
-<li>关闭后的channel，可以读数据，因为channel中，可能会有缓存数据存在</li>
-<li>关闭后的channel，如果再写数据，会引起panic异常，可以判断是否channel关闭，防止panic产生</li>
-<li>nil的channel读写都会阻塞，再次close会引起panic</li>
-</ul>
-<h4 id="关闭原则"><a href="#关闭原则" class="headerlink" title="关闭原则"></a>关闭原则</h4><p>一个常用的使用Go通道的原则是<strong>不要在数据接收方或者在有多个发送者的情况下关闭通道</strong>。 换句话说，我们只应该让一个通道唯一的发送者关闭此通道。</p>
-<ul>
-<li>情形一：M个接收者和一个发送者。发送者通过关闭用来传输数据的通道来传递发送结束信号</li>
-<li>情形二：一个接收者和N个发送者，此唯一接收者通过关闭一个额外的信号通道来通知发送者不要在发送数据了</li>
-<li>情形三：M个接收者和N个发送者。它们中的任何协程都可以让一个中间调解协程帮忙发出停止数据传送的信号</li>
-<li>情形四：“M个接收者和一个发送者”情形的一个变种：用来传输数据的通道的关闭请求由第三方发出</li>
-</ul>
-
+          
       
     </div>
 
