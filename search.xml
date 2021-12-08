@@ -297,6 +297,11 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
+    <title>prometheus</title>
+    <url>/2021/08/19/prometheus/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>protoc使用</title>
     <url>/2021/11/12/protoc%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
@@ -320,11 +325,6 @@
 <li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
 </ul>
 ]]></content>
-  </entry>
-  <entry>
-    <title>prometheus</title>
-    <url>/2021/08/19/prometheus/</url>
-    <content><![CDATA[]]></content>
   </entry>
   <entry>
     <title>rabbitMQ介绍1</title>
