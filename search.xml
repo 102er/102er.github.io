@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>GO的GMP模型</title>
+    <url>/2021/08/19/GO%E7%9A%84GMP%E6%A8%A1%E5%9E%8B/</url>
+    <content><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
+<h4 id="并发-amp-并行"><a href="#并发-amp-并行" class="headerlink" title="并发&amp;并行"></a><strong>并发</strong>&amp;并行</h4><p><strong>并发：</strong>某一段时间，几个程序在同一个cpu上运行，但任意一个时间点只有一个程序在运行。解决程序排队等待的问题，如果一个程序发生阻塞，那么其他程序仍可以正常的执行。站在cpu的角度上，并发实际也是串行的。</p>
+<p><strong>并行</strong>：需要硬件支持，系统必须具备多个cpu，才能有并行的能力。不同cpu在同一时间运行不同程序，互不抢占资源，实现真正的同时执行。</p>
+<p><strong>区别</strong>：并发只是在宏观上给人感觉多个程序在同时运行，但实际单cpu系统中，每一时刻只有一个程序在运行。而并行关键是多核【同时】执行。</p>
+<h4 id="进程-amp-线程-amp-协程"><a href="#进程-amp-线程-amp-协程" class="headerlink" title="进程 &amp; 线程 &amp; 协程"></a><strong>进程</strong> &amp; 线程 &amp; 协程</h4><p><strong>进程：</strong>用于划分程序运行时所需要的资源(IO资源，信号处理，内存资源等)，是程序运行的基本资源单位(最小单位)；不共享堆栈，由操作系统调度，属于抢占式调度，有三个状态：等待，就绪和运行状态。进程之间是互相隔离，各自拥有独立的系统资源，更加安全但是进程间通信不方便。</p>
+<p>进程间通讯方式：管道，信号，消息队列，共享内存，socket</p>
+<p><strong>线程</strong>：系统进行运算调度的最小单位，一个进程至少包含一个线程(主线程)；线程由线程ID，当前指令指针，寄存器集合和堆栈组成，不拥有系统资源，进程内的所有线程共享进程资源；共享堆，不共享栈，由操作系统调度，属于抢占式调度。</p>
+<p>线程间通讯方式：互斥量，信号量</p>
+<p><strong>协程</strong>：用户级线程，是执行流，并不是运行实体，内核并不知道协程存在，共享堆，不共享栈，拥有自己的寄存器上下文和栈，由用户程序进程调度，是协作式调度，需要协程自己主动把控制权转让出去。</p>
+<p><strong>区别</strong>：进程是cpu资源分配的基本单位，线程是独立运行和独立调度的基本单位；进程拥有自己的资源空间，一个进程包含了N个线程，线程和cpu资源分配无关，多个线程共享同一进程内的资源；线程的调度与切换比进程快很多(进程切换涉及资源切换，但是线程切换不需要)；协程和线程的区别，协程调度发生在用户态，无需线程上下文切换开销，而线程调度发生在内核态，所以协程调度会更加轻量。</p>
+<h3 id="GMP模型"><a href="#GMP模型" class="headerlink" title="GMP模型"></a>GMP模型</h3><p><strong>M</strong>：代表OS线程，一个M就是一个线程，真正的执行者，数量比P多，M创建之后，会去P的free list寻找可用P进行绑定，如果没有绑定到P，则进入阻塞状态</p>
+<p><strong>G</strong>：go func出来的goroutine，代表一个用户代码的只执行流，拥有独立的栈空间</p>
+<p><strong>P</strong>：默认机器的核数，表示执行所需要的资源，P的数量代表最大并行程度，一个P对应多个M，但是同一时刻，只有一个M与P绑定；每个P都有一个本地存放G的队列，M和P绑定时，如果新生成的G会放入本地runq中，本地队列满了，会截取本地队列一半的G放入全局队列中。p减少了锁竞争以及增加了资源利用率。</p>
+<p><strong>调度流程如下：</strong></p>
+<ol>
+<li>go func创建一个G对象，会保存在全局runq或者本地的runq（先放在生成G的线程runq下，如果队列满了，会放到全局runq）</li>
+<li>G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；</li>
+<li>当go func的时候，G去唤醒一个M，M寻找是否有空闲的P，如果有则将该G对象移动到它本身</li>
+<li>M执行一个调度循环：<ol>
+<li>调度G对象，G对象来源：1/61的几率从全局队来，60/61的几率在本地队列寻找G</li>
+<li>执行 -&gt; 清理线程 -&gt; 继续寻找新的G</li>
+</ol>
+</li>
+<li>p的某个G发生网络调用(或者系统调用，因为和系统交互是线程，所以当前M是阻塞的)，那么P和M会解绑，P会带着其他G去寻找新的M(找空闲的M，如果没有则new一个出来)</li>
+<li>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，然后这个 G 会被放入全局队列中。</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>GO</tag>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>GO的channel</title>
     <url>/2021/08/19/GO%E7%9A%84channel/</url>
     <content><![CDATA[<h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列</p>
@@ -122,157 +157,6 @@
       </tags>
   </entry>
   <entry>
-    <title>GO的GMP模型</title>
-    <url>/2021/08/19/GO%E7%9A%84GMP%E6%A8%A1%E5%9E%8B/</url>
-    <content><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
-<h4 id="并发-amp-并行"><a href="#并发-amp-并行" class="headerlink" title="并发&amp;并行"></a><strong>并发</strong>&amp;并行</h4><p><strong>并发：</strong>某一段时间，几个程序在同一个cpu上运行，但任意一个时间点只有一个程序在运行。解决程序排队等待的问题，如果一个程序发生阻塞，那么其他程序仍可以正常的执行。站在cpu的角度上，并发实际也是串行的。</p>
-<p><strong>并行</strong>：需要硬件支持，系统必须具备多个cpu，才能有并行的能力。不同cpu在同一时间运行不同程序，互不抢占资源，实现真正的同时执行。</p>
-<p><strong>区别</strong>：并发只是在宏观上给人感觉多个程序在同时运行，但实际单cpu系统中，每一时刻只有一个程序在运行。而并行关键是多核【同时】执行。</p>
-<h4 id="进程-amp-线程-amp-协程"><a href="#进程-amp-线程-amp-协程" class="headerlink" title="进程 &amp; 线程 &amp; 协程"></a><strong>进程</strong> &amp; 线程 &amp; 协程</h4><p><strong>进程：</strong>用于划分程序运行时所需要的资源(IO资源，信号处理，内存资源等)，是程序运行的基本资源单位(最小单位)；不共享堆栈，由操作系统调度，属于抢占式调度，有三个状态：等待，就绪和运行状态。进程之间是互相隔离，各自拥有独立的系统资源，更加安全但是进程间通信不方便。</p>
-<p>进程间通讯方式：管道，信号，消息队列，共享内存，socket</p>
-<p><strong>线程</strong>：系统进行运算调度的最小单位，一个进程至少包含一个线程(主线程)；线程由线程ID，当前指令指针，寄存器集合和堆栈组成，不拥有系统资源，进程内的所有线程共享进程资源；共享堆，不共享栈，由操作系统调度，属于抢占式调度。</p>
-<p>线程间通讯方式：互斥量，信号量</p>
-<p><strong>协程</strong>：用户级线程，是执行流，并不是运行实体，内核并不知道协程存在，共享堆，不共享栈，拥有自己的寄存器上下文和栈，由用户程序进程调度，是协作式调度，需要协程自己主动把控制权转让出去。</p>
-<p><strong>区别</strong>：进程是cpu资源分配的基本单位，线程是独立运行和独立调度的基本单位；进程拥有自己的资源空间，一个进程包含了N个线程，线程和cpu资源分配无关，多个线程共享同一进程内的资源；线程的调度与切换比进程快很多(进程切换涉及资源切换，但是线程切换不需要)；协程和线程的区别，协程调度发生在用户态，无需线程上下文切换开销，而线程调度发生在内核态，所以协程调度会更加轻量。</p>
-<h3 id="GMP模型"><a href="#GMP模型" class="headerlink" title="GMP模型"></a>GMP模型</h3><p><strong>M</strong>：代表OS线程，一个M就是一个线程，真正的执行者，数量比P多，M创建之后，会去P的free list寻找可用P进行绑定，如果没有绑定到P，则进入阻塞状态</p>
-<p><strong>G</strong>：go func出来的goroutine，代表一个用户代码的只执行流，拥有独立的栈空间</p>
-<p><strong>P</strong>：默认机器的核数，表示执行所需要的资源，P的数量代表最大并行程度，一个P对应多个M，但是同一时刻，只有一个M与P绑定；每个P都有一个本地存放G的队列，M和P绑定时，如果新生成的G会放入本地runq中，本地队列满了，会截取本地队列一半的G放入全局队列中。p减少了锁竞争以及增加了资源利用率。</p>
-<p><strong>调度流程如下：</strong></p>
-<ol>
-<li>go func创建一个G对象，会保存在全局runq或者本地的runq（先放在生成G的线程runq下，如果队列满了，会放到全局runq）</li>
-<li>G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；</li>
-<li>当go func的时候，G去唤醒一个M，M寻找是否有空闲的P，如果有则将该G对象移动到它本身</li>
-<li>M执行一个调度循环：<ol>
-<li>调度G对象，G对象来源：1/61的几率从全局队来，60/61的几率在本地队列寻找G</li>
-<li>执行 -&gt; 清理线程 -&gt; 继续寻找新的G</li>
-</ol>
-</li>
-<li>p的某个G发生网络调用(或者系统调用，因为和系统交互是线程，所以当前M是阻塞的)，那么P和M会解绑，P会带着其他G去寻找新的M(找空闲的M，如果没有则new一个出来)</li>
-<li>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，然后这个 G 会被放入全局队列中。</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>GO</tag>
-        <tag>并发编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2021/08/19/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>mysql索引介绍1</title>
-    <url>/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>prometheus</title>
-    <url>/2021/08/19/prometheus/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>rabbitMQ介绍1</title>
-    <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>redis</title>
-    <url>/2021/08/19/redis/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>二分查找</title>
-    <url>/2021/08/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>二叉树遍历</title>
-    <url>/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>git版本回退</title>
-    <url>/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/</url>
-    <content><![CDATA[<h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
-<h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
-<ul>
-<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
-</ul>
-<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
-<ol>
-<li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
-<li>git cherry-pick fb9e36f    #找回消失的提交记录</li>
-<li>git cherry-pick 6d60f55   #找回消失的提交记录</li>
-<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
-<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
-</ol>
-<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 互动模式，帮助我们解决多量commit的场景。</p>
-<p>常用命令：</p>
-<ul>
-<li>使用 <code>git reset HEAD^</code> 回到上一個 patch（檔案內容不清空）</li>
-<li>使用 <code>git reset --hard HEAD^</code> 回到上一個 patch，並且強制清除修改的內容 </li>
-<li>使用 <code>git reset --hard &lt;commit id&gt;</code> 直接 reset 成指定的 patch</li>
-<li>使用 git reset –soft HEAD^  回到前一個 patch，但保持檔案狀態為 *<strong>Changes to be committed*</strong></li>
-<li><strong>– hard  要慎用此参数，它会删除回退点之前的所有修改内容。</strong>如果代码未提交，那就很难补救了，如果代码已经提交，那可以通过找到commit id 找回代码</li>
-</ul>
-<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：<code>git revert -n 057c752</code>  它可以帮忙我们移除一个commit；它仅仅只是踢掉这个commit，其他的commit还是在的。常用命令：</p>
-<ul>
-<li>使用 <code>git revert &lt;commit id&gt;</code> 還原指定的 patch</li>
-<li>使用 <code>git revert --continue</code> 告知 git 已經解完衝突</li>
-<li>使用 <code>git revert --abort</code> 來要放棄這次 revert</li>
-<li>不适用于合并操作的commit</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
-]]></content>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>protoc使用</title>
-    <url>/2021/11/12/protoc%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
-
-<p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
-<p>— 很多情况下，我们会在一个proto文件里面import其他proto文件，就需要指定这个路径，使protoc可以找到依赖。</p>
-<p><strong>–xxx_out=OUT_DIR</strong>：指定使用哪个插件生成相应语言的代码。go需要自己安装插件，一般会选择官方的protoc-gen-go 【–go_out=XXXX】，如果对自定义要求高，可以了解protoc-gen-gogo 【–gogo_out=XXXX】；<code>--xxx_out</code>主要的两个参数为<code>plugins</code> 和 <code>paths</code>，分别表示生成Go代码所使用的插件，以及生成的Go代码的位置。<code>--go_out</code>的写法是，参数之间用逗号隔开，最后加上冒号来指定代码的生成位置，比如<code>--go_out=plugins=grpc,paths=import:.</code></p>
-<ul>
-<li><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</li>
-<li>​    <code>plugins</code>参数有不带grpc和带grpc两种（应该还有其它的，目前知道的有这两种），两者的区别如下，带grpc的会多一些跟gRPC相关的代码，实现gRPC通信：</li>
-</ul>
-<p><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</p>
-<p>  **  @<filename> ** ：表示要生成的proto文件，可以是一个目录，它会把目录下所有proto文件生成对应的代码。</p>
-<h3 id="proto文件"><a href="#proto文件" class="headerlink" title="proto文件"></a>proto文件</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package helloWorld;</span><br><span class="line"></span><br><span class="line">option go_package=&quot;api/v1&quot;;</span><br><span class="line"></span><br><span class="line">service Greeter &#123;</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>syntax：指定proto版本，默认是proto2进行编译</li>
-<li><code>package</code>：是proto文件的命名空间，避免我们定义的service、message出现冲突。</li>
-<li>go_package：生成go语言对应的包路径，对应go的包名，它的设置上需要和–go_out==xxx相同，保证go能够被正确引用。（当然，不一样也可以，这样需要保证go_out目录下只有这个包，不然就会出现冲突，所以，我们设置上一般保证相同，减少不必要的问题）</li>
-<li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>服务部署</title>
-    <url>/2021/08/19/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>TCP介绍</title>
     <url>/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：</p>
@@ -336,18 +220,135 @@
 <li>客户端收到来自服务器的 FIN 报文段后，向服务器发送确认报文。标志位：ACK=1,并携带ack=z+1和seq=x+1的序号值，随后进入 TIME-WAIT 状态。注意，此时tcp连接还没有释放，必须等待 2MSL(2 * Maximum Segment Lifetime，两倍的报文段最大存活时间) 的时间后，客户端才会进入closed状态。</li>
 <li>服务端接收到客户端的确认报文，立即进入closed状态。</li>
 </ol>
-<h3 id="客户端为什么还要等待2MSL？"><a href="#客户端为什么还要等待2MSL？" class="headerlink" title="客户端为什么还要等待2MSL？"></a>客户端为什么还要等待2MSL？</h3><p>MSL(Maximum Segment Lifetime)，tcp允许不同的实现可以设置不同的msl值。去向ACK消息最大存活时间(MSL)+来自FIN消息的最大存活时间(MSL)  =  2MSL</p>
+<h3 id="客户端为什么还要等待2MSL？"><a href="#客户端为什么还要等待2MSL？" class="headerlink" title="客户端为什么还要等待2MSL？"></a>客户端为什么还要等待2MSL？</h3><p>MSL(Maximum Segment Lifetime)，tcp允许不同的实现可以设置不同的MSL值。去向ACK消息最大存活时间(MSL)+来自FIN消息的最大存活时间(MSL)  =  2MSL</p>
 <ul>
 <li>保证客户端发送的最后一个ACK报文能够到达服务器；网络并不总是可靠的，如果客户端发送的 ACK 报文段丢失，服务器在接收不到 ACK 的情况下会一直重发 FIN 报文段，这显然不是我们想要的。因此客户端为了确保服务器收到了 ACK，会设置一个定时器，并在 TIME-WAIT 状态等待 2MSL 的时间，如果在此期间又收到了来自服务器的 FIN 报文段，那么客户端会重新设置计时器并再次等待 2MSL 的时间，</li>
 <li>登录2MSL时间，客户端可以放心释放tcp占用的资源和端口。2MSL时间，可以保证老的tcp连接的活跃报文全部close，这样保证客户端重新发起的连接，不会和旧连接有数据冲突。</li>
 </ul>
 <h3 id="为什么-TCP-关闭连接为什么要四次而不是三次？"><a href="#为什么-TCP-关闭连接为什么要四次而不是三次？" class="headerlink" title="为什么 TCP 关闭连接为什么要四次而不是三次？"></a>为什么 TCP 关闭连接为什么要四次而不是三次？</h3><p>服务器在收到客户端的 FIN 报文段后，可能还有一些数据要传输，所以不能马上关闭连接，但是会做出应答，返回 ACK 报文段，接下来可能会继续发送数据，在数据发送完后，服务器会向客户单发送 FIN 报文，表示数据已经发送完毕，请求关闭连接，然后客户端再做出应答，因此一共需要四次挥手。</p>
-]]></content>
+<h3 id="如果双方已经建立连接，但是客户端出现故障怎么办？"><a href="#如果双方已经建立连接，但是客户端出现故障怎么办？" class="headerlink" title="如果双方已经建立连接，但是客户端出现故障怎么办？"></a>如果双方已经建立连接，但是客户端出现故障怎么办？</h3><p>客户端故障，服务器不可能一直等待下去，浪费系统资源。TCP设有一个保活计时器，服务器每次收一个客户端请求就会复位这个计时器。如果服务端长时间没有收到客户端的请求，就会发送一个探测报文段，并每隔75s发送一次，连续10个探测报文都没有响应，服务器就会判断客户端故障，关闭连接。</p>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><h2 id="TCP-粘包与拆包"><a href="#TCP-粘包与拆包" class="headerlink" title="TCP 粘包与拆包"></a>TCP 粘包与拆包</h2>]]></content>
       <categories>
         <category>网络</category>
       </categories>
       <tags>
         <tag>TCP</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>git版本回退</title>
+    <url>/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/</url>
+    <content><![CDATA[<h3 id="代码回滚"><a href="#代码回滚" class="headerlink" title="代码回滚"></a>代码回滚</h3><p>git在代码回滚提供了多种方式，比如：git reset…，git revert…，git rebase…等，使用哪种方式回退，取决于实际回退场景。</p>
+<h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
+<ul>
+<li><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></li>
+</ul>
+<p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
+<ol>
+<li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
+<li>git cherry-pick fb9e36f    #找回消失的提交记录</li>
+<li>git cherry-pick 6d60f55   #找回消失的提交记录</li>
+<li>如果有冲突，需要解决冲突，然后执行：git cherry-pick –continue</li>
+<li>最后再提交到远程 需要强制覆盖远程：git push -f</li>
+</ol>
+<p>这样就实现了版本的回退。有时候，我们发现要回退版本的时候，已经有很多人提交了。这时候 如果在使用git reset+cherry-pick方式，那不得疯了。基于cherry-pick之上，我们可以使用<strong>git rebase -i</strong> 互动模式，帮助我们解决多量commit的场景。</p>
+<p>常用命令：</p>
+<ul>
+<li>使用 <code>git reset HEAD^</code> 回到上一個 patch（檔案內容不清空）</li>
+<li>使用 <code>git reset --hard HEAD^</code> 回到上一個 patch，並且強制清除修改的內容 </li>
+<li>使用 <code>git reset --hard &lt;commit id&gt;</code> 直接 reset 成指定的 patch</li>
+<li>使用 git reset –soft HEAD^  回到前一個 patch，但保持檔案狀態為 *<strong>Changes to be committed*</strong></li>
+<li><strong>– hard  要慎用此参数，它会删除回退点之前的所有修改内容。</strong>如果代码未提交，那就很难补救了，如果代码已经提交，那可以通过找到commit id 找回代码</li>
+</ul>
+<h4 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h4><p>revert一般在剔除部分提交。比如，我不需要commit=057c752,就可以执行：<code>git revert -n 057c752</code>  它可以帮忙我们移除一个commit；它仅仅只是踢掉这个commit，其他的commit还是在的。常用命令：</p>
+<ul>
+<li>使用 <code>git revert &lt;commit id&gt;</code> 還原指定的 patch</li>
+<li>使用 <code>git revert --continue</code> 告知 git 已經解完衝突</li>
+<li>使用 <code>git revert --abort</code> 來要放棄這次 revert</li>
+<li>不适用于合并操作的commit</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>reset 适用于回退版本到当前版本没有新的commit，而revert是剪掉某个commit记录。</p>
+]]></content>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2021/09/01/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>mysql索引介绍1</title>
+    <url>/2021/08/19/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D1/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>protoc使用</title>
+    <url>/2021/11/12/protoc%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
+
+<p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
+<p>— 很多情况下，我们会在一个proto文件里面import其他proto文件，就需要指定这个路径，使protoc可以找到依赖。</p>
+<p><strong>–xxx_out=OUT_DIR</strong>：指定使用哪个插件生成相应语言的代码。go需要自己安装插件，一般会选择官方的protoc-gen-go 【–go_out=XXXX】，如果对自定义要求高，可以了解protoc-gen-gogo 【–gogo_out=XXXX】；<code>--xxx_out</code>主要的两个参数为<code>plugins</code> 和 <code>paths</code>，分别表示生成Go代码所使用的插件，以及生成的Go代码的位置。<code>--go_out</code>的写法是，参数之间用逗号隔开，最后加上冒号来指定代码的生成位置，比如<code>--go_out=plugins=grpc,paths=import:.</code></p>
+<ul>
+<li><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</li>
+<li>​    <code>plugins</code>参数有不带grpc和带grpc两种（应该还有其它的，目前知道的有这两种），两者的区别如下，带grpc的会多一些跟gRPC相关的代码，实现gRPC通信：</li>
+</ul>
+<p><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</p>
+<p>  **  @<filename> ** ：表示要生成的proto文件，可以是一个目录，它会把目录下所有proto文件生成对应的代码。</p>
+<h3 id="proto文件"><a href="#proto文件" class="headerlink" title="proto文件"></a>proto文件</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package helloWorld;</span><br><span class="line"></span><br><span class="line">option go_package=&quot;api/v1&quot;;</span><br><span class="line"></span><br><span class="line">service Greeter &#123;</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>syntax：指定proto版本，默认是proto2进行编译</li>
+<li><code>package</code>：是proto文件的命名空间，避免我们定义的service、message出现冲突。</li>
+<li>go_package：生成go语言对应的包路径，对应go的包名，它的设置上需要和–go_out==xxx相同，保证go能够被正确引用。（当然，不一样也可以，这样需要保证go_out目录下只有这个包，不然就会出现冲突，所以，我们设置上一般保证相同，减少不必要的问题）</li>
+<li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>prometheus</title>
+    <url>/2021/08/19/prometheus/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>rabbitMQ介绍1</title>
+    <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D1/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>redis</title>
+    <url>/2021/08/19/redis/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>二分查找</title>
+    <url>/2021/08/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>二叉树遍历</title>
+    <url>/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>服务部署</title>
+    <url>/2021/08/19/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>

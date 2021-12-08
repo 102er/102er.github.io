@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next pisces use-motion" lang="zh-Hans">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -91,7 +91,7 @@
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-4hs.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-06T12:17:21.315Z">
+<meta property="article:modified_time" content="2021-12-08T02:28:17.291Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
@@ -103,7 +103,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '',
-    scheme: 'Pisces',
+    scheme: 'Gemini',
     version: '5.1.4',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
@@ -442,13 +442,14 @@
 <li>客户端收到来自服务器的 FIN 报文段后，向服务器发送确认报文。标志位：ACK=1,并携带ack=z+1和seq=x+1的序号值，随后进入 TIME-WAIT 状态。注意，此时tcp连接还没有释放，必须等待 2MSL(2 * Maximum Segment Lifetime，两倍的报文段最大存活时间) 的时间后，客户端才会进入closed状态。</li>
 <li>服务端接收到客户端的确认报文，立即进入closed状态。</li>
 </ol>
-<h3 id="客户端为什么还要等待2MSL？"><a href="#客户端为什么还要等待2MSL？" class="headerlink" title="客户端为什么还要等待2MSL？"></a>客户端为什么还要等待2MSL？</h3><p>MSL(Maximum Segment Lifetime)，tcp允许不同的实现可以设置不同的msl值。去向ACK消息最大存活时间(MSL)+来自FIN消息的最大存活时间(MSL)  =  2MSL</p>
+<h3 id="客户端为什么还要等待2MSL？"><a href="#客户端为什么还要等待2MSL？" class="headerlink" title="客户端为什么还要等待2MSL？"></a>客户端为什么还要等待2MSL？</h3><p>MSL(Maximum Segment Lifetime)，tcp允许不同的实现可以设置不同的MSL值。去向ACK消息最大存活时间(MSL)+来自FIN消息的最大存活时间(MSL)  =  2MSL</p>
 <ul>
 <li>保证客户端发送的最后一个ACK报文能够到达服务器；网络并不总是可靠的，如果客户端发送的 ACK 报文段丢失，服务器在接收不到 ACK 的情况下会一直重发 FIN 报文段，这显然不是我们想要的。因此客户端为了确保服务器收到了 ACK，会设置一个定时器，并在 TIME-WAIT 状态等待 2MSL 的时间，如果在此期间又收到了来自服务器的 FIN 报文段，那么客户端会重新设置计时器并再次等待 2MSL 的时间，</li>
 <li>登录2MSL时间，客户端可以放心释放tcp占用的资源和端口。2MSL时间，可以保证老的tcp连接的活跃报文全部close，这样保证客户端重新发起的连接，不会和旧连接有数据冲突。</li>
 </ul>
 <h3 id="为什么-TCP-关闭连接为什么要四次而不是三次？"><a href="#为什么-TCP-关闭连接为什么要四次而不是三次？" class="headerlink" title="为什么 TCP 关闭连接为什么要四次而不是三次？"></a>为什么 TCP 关闭连接为什么要四次而不是三次？</h3><p>服务器在收到客户端的 FIN 报文段后，可能还有一些数据要传输，所以不能马上关闭连接，但是会做出应答，返回 ACK 报文段，接下来可能会继续发送数据，在数据发送完后，服务器会向客户单发送 FIN 报文，表示数据已经发送完毕，请求关闭连接，然后客户端再做出应答，因此一共需要四次挥手。</p>
-
+<h3 id="如果双方已经建立连接，但是客户端出现故障怎么办？"><a href="#如果双方已经建立连接，但是客户端出现故障怎么办？" class="headerlink" title="如果双方已经建立连接，但是客户端出现故障怎么办？"></a>如果双方已经建立连接，但是客户端出现故障怎么办？</h3><p>客户端故障，服务器不可能一直等待下去，浪费系统资源。TCP设有一个保活计时器，服务器每次收一个客户端请求就会复位这个计时器。如果服务端长时间没有收到客户端的请求，就会发送一个探测报文段，并每隔75s发送一次，连续10个探测报文都没有响应，服务器就会判断客户端故障，关闭连接。</p>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><h2 id="TCP-粘包与拆包"><a href="#TCP-粘包与拆包" class="headerlink" title="TCP 粘包与拆包"></a>TCP 粘包与拆包</h2>
       
     </div>
     
@@ -477,10 +478,6 @@
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
-            
-              <a href="/2021/08/19/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
-              </a>
             
           </div>
 
@@ -626,7 +623,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-FLOOD%E6%94%BB%E5%87%BB"><span class="nav-number">3.2.</span> <span class="nav-text">SYN FLOOD攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E7%AD%89%E5%BE%852MSL%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">客户端为什么还要等待2MSL？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-TCP-%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E8%80%8C%E4%B8%8D%E6%98%AF%E4%B8%89%E6%AC%A1%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">为什么 TCP 关闭连接为什么要四次而不是三次？</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%AE%B5"><span class="nav-number">2.</span> <span class="nav-text">TCP报文段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">为什么三次握手？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SYN-FLOOD%E6%94%BB%E5%87%BB"><span class="nav-number">3.2.</span> <span class="nav-text">SYN FLOOD攻击</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.</span> <span class="nav-text">四次挥手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E8%A6%81%E7%AD%89%E5%BE%852MSL%EF%BC%9F"><span class="nav-number">4.1.</span> <span class="nav-text">客户端为什么还要等待2MSL？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-TCP-%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E8%80%8C%E4%B8%8D%E6%98%AF%E4%B8%89%E6%AC%A1%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">为什么 TCP 关闭连接为什么要四次而不是三次？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%8F%8C%E6%96%B9%E5%B7%B2%E7%BB%8F%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5%EF%BC%8C%E4%BD%86%E6%98%AF%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%87%BA%E7%8E%B0%E6%95%85%E9%9A%9C%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">4.3.</span> <span class="nav-text">如果双方已经建立连接，但是客户端出现故障怎么办？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">拥塞控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-%E7%B2%98%E5%8C%85%E4%B8%8E%E6%8B%86%E5%8C%85"><span class="nav-number">7.</span> <span class="nav-text">TCP 粘包与拆包</span></a></li></ol></div>
             
 
           </div>
@@ -664,7 +661,7 @@
 
 
 
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
 
 
 
