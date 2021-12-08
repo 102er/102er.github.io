@@ -239,7 +239,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-11-16 16:44:28" itemprop="dateModified" datetime="2021-11-16T16:44:28+08:00">2021-11-16</time>
+      <time title="修改时间：2021-12-08 21:43:04" itemprop="dateModified" datetime="2021-12-08T21:43:04+08:00">2021-12-08</time>
     </span>
 
   
@@ -253,26 +253,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
-
-<p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
-<p>— 很多情况下，我们会在一个proto文件里面import其他proto文件，就需要指定这个路径，使protoc可以找到依赖。</p>
-<p><strong>–xxx_out=OUT_DIR</strong>：指定使用哪个插件生成相应语言的代码。go需要自己安装插件，一般会选择官方的protoc-gen-go 【–go_out=XXXX】，如果对自定义要求高，可以了解protoc-gen-gogo 【–gogo_out=XXXX】；<code>--xxx_out</code>主要的两个参数为<code>plugins</code> 和 <code>paths</code>，分别表示生成Go代码所使用的插件，以及生成的Go代码的位置。<code>--go_out</code>的写法是，参数之间用逗号隔开，最后加上冒号来指定代码的生成位置，比如<code>--go_out=plugins=grpc,paths=import:.</code></p>
-<ul>
-<li><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</li>
-<li>​    <code>plugins</code>参数有不带grpc和带grpc两种（应该还有其它的，目前知道的有这两种），两者的区别如下，带grpc的会多一些跟gRPC相关的代码，实现gRPC通信：</li>
-</ul>
-<p><code>paths</code>参数有两个选项，分别是 <code>import</code> 和 <code>source_relative</code>，默认为 import，表示按照生成的Go代码的包的全路径去创建目录层级，source_relative 表示按照 <strong>proto源文件的目录层级</strong>去创建Go代码的目录层级，如果目录已存在则不用创建。</p>
-<p>  **  @<filename> ** ：表示要生成的proto文件，可以是一个目录，它会把目录下所有proto文件生成对应的代码。</p>
-<h3 id="proto文件"><a href="#proto文件" class="headerlink" title="proto文件"></a>proto文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">syntax = &quot;proto3&quot;;</span><br><span class="line"></span><br><span class="line">package helloWorld;</span><br><span class="line"></span><br><span class="line">option go_package=&quot;api/v1&quot;;</span><br><span class="line"></span><br><span class="line">service Greeter &#123;</span><br><span class="line">  rpc SayHello (HelloRequest) returns (HelloReply) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  string name = 1;</span><br><span class="line">&#125;</span><br><span class="line">message HelloReply &#123;</span><br><span class="line">  string message = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>syntax：指定proto版本，默认是proto2进行编译</li>
-<li><code>package</code>：是proto文件的命名空间，避免我们定义的service、message出现冲突。</li>
-<li>go_package：生成go语言对应的包路径，对应go的包名，它的设置上需要和–go_out==xxx相同，保证go能够被正确引用。（当然，不一样也可以，这样需要保证go_out目录下只有这个包，不然就会出现冲突，所以，我们设置上一般保证相同，减少不必要的问题）</li>
-<li>注意，不同包之间的 proto 文件不可以循环依赖，这会导致生成的 go 包之间也存在循环依赖，导致 go 代码编译不通过。</li>
-</ul>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

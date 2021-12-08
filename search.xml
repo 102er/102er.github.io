@@ -291,6 +291,8 @@
     <title>protoc使用</title>
     <url>/2021/11/12/protoc%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
+<span id="more"></span>
+
 <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="protoc指令"><a href="#protoc指令" class="headerlink" title="protoc指令"></a>protoc指令</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">protoc	--proto_path=api/v1 \</span><br><span class="line">        -I=api/v2 \</span><br><span class="line">			 --gogo_out=paths=source_relative:. \</span><br><span class="line">       api/v1/hello_world.proto</span><br></pre></td></tr></table></figure>
 
 <p> <strong>-IPATH, –proto_path=PATH 也可以用 -I</strong>：它表示protoc在哪个路径下搜索proto文件，可以重复使用这个参数，表示指定多个目录进行搜索。啥场景需要指定这个参数？</p>
