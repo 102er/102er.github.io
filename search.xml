@@ -91,6 +91,8 @@
 <li>基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。</li>
 <li>可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。</li>
 </ul>
+<span id="more"></span>
+
 <h2 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h2><p><img src="https://102er.github.io/images/tcp-bw.png" alt="osi"></p>
 <ul>
 <li>端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口号+ip可以组成一个socket</li>
