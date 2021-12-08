@@ -235,7 +235,7 @@
 <span id="more"></span>
 
 <h4 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h4><p>回退版本，直接把代码回退到某个提交，以实际例子，演示下需要如何回退：</p>
-<p>Todo</p>
+<p><img src="https://102er.github.io/images/git-reset-log.png" alt="avatar"></p>
 <p>看提交记录，我们把dev分支不小心合并到了当前特性分支，需要剪掉dev的分支，保证功能分支的特性唯一。从分支线图看出，我们需要回退到 commit id = a94308f 这个版本，问题点是，我们在dev合并之后，又commit了几个记录，我们的目的是剪掉dev合并这次记录，如果是普通的commit 那么我们可以用git revert 撤销这个提交。但是这个是merge操作，没办法。所以，只能回退到a94308f这个版本，然后把dev后的提交pick进来。具体命令如下：</p>
 <ol>
 <li>git reset –hard  a94308f  #回退到这个版本，并清空其他提交内容</li>
