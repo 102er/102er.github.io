@@ -82,88 +82,6 @@
       </tags>
   </entry>
   <entry>
-    <title>GO 100问</title>
-    <url>/2021/08/19/GO%E7%9A%84%E9%9D%A2%E8%AF%95%E9%A2%98/</url>
-    <content><![CDATA[<h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>go的常见问答</p>
-<h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
-<ul>
-<li>一个<code>T</code>类型的值可以调用为<code>*T</code>类型声明的方法，但是仅当此<code>T</code>的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此<code>T</code>值的地址。 因为不是任何<code>T</code>值都是可寻址的，所以并非任何<code>T</code>值都能够调用为类型<code>*T</code>声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址）</li>
-<li>一个<code>*T</code>类型的值可以调用为类型<code>T</code>声明的方法。 这是因为解引用指针总是合法的。 这种便利不仅仅是一个语法糖，它也是一种固有的规则。</li>
-</ul>
-<p>所以很合理的， <code>*T</code>的方法集总是<code>T</code>方法集的超集，但反之不然。</p>
-<p>事实上，你可以认为对于每一个为类型<code>T</code>声明的方法，编译器都会为类型<code>*T</code>自动隐式声明一个同名和同签名的方法。</p>
-<span id="more"></span>
-
-<h4 id="for和range区别"><a href="#for和range区别" class="headerlink" title="for和range区别"></a>for和range区别</h4><p>range 在迭代过程中返回的是迭代值的拷贝，如果每次迭代的元素的内存占用很低，那么 for 和 range 的性能几乎是一样。但是如果迭代的元素内存占用较高，例如一个包含很多属性的 struct 结构体，那么 for 的性能将显著地高于 range，有时候甚至会有上千倍的性能差异。对于这种场景，建议使用 for，如果使用 range，建议只迭代下标，通过下标访问迭代值，这种使用方式和 for 就没有区别了。如果想使用 range 同时迭代下标和值，则需要将切片/数组的元素改为指针，才能不影响性能。</p>
-<h4 id="数组和切片区别"><a href="#数组和切片区别" class="headerlink" title="数组和切片区别"></a>数组和切片区别</h4><p>数组是不可变的数据类型，线程安全</p>
-<p>切片是动态可变的数据结构，包含长度，容量以及指向数组的应用，线程不安全</p>
-<h4 id="rune数据类型"><a href="#rune数据类型" class="headerlink" title="rune数据类型"></a>rune数据类型</h4><p>rune是Go语言中一种特殊的数据类型,它是int32的别名,几乎在所有方面等同于int32,用于区分字符值和整数值。</p>
-<p>补充：golang中的字符有两种，uint8（byte）代表ASCII的一个字符，rune代表一个utf-8字符。</p>
-<p>理解：当需要处理中文、日文或者其他复合字符时，则需要用到rune类型，rune实际是一个int32.</p>
-<h4 id="init函数"><a href="#init函数" class="headerlink" title="init函数"></a>init函数</h4><ul>
-<li>不同包的 <code>init()</code>执行顺序，按照 <code>导入包的依赖关系</code> 决定</li>
-<li><code>init()</code> 不能被其他函数调用，而自动 <code>在main函数执行前</code> 被调用</li>
-<li>执行顺序：import –&gt; const –&gt; var –&gt; init() –&gt; main()</li>
-</ul>
-<h4 id="make和new的区别"><a href="#make和new的区别" class="headerlink" title="make和new的区别"></a>make和new的区别</h4><ul>
-<li>new可以初始化所有类型，为类型申请一块内存空间并返回一个指针</li>
-<li>make只能用于map ，channel，slice初始化，返回的是类型引用</li>
-</ul>
-<h4 id="什么是协程泄露-Goroutine-Leak-？"><a href="#什么是协程泄露-Goroutine-Leak-？" class="headerlink" title="什么是协程泄露(Goroutine Leak)？"></a>什么是协程泄露(Goroutine Leak)？</h4><p>go协程正常结束后，会被gc回收，但是如果一些操作不当，就会引起协程一直处于阻塞状态或者永远运行，这种情况就是协程泄漏了，他会一直消耗资源，直到系统奔溃。泄漏的场景：</p>
-<ul>
-<li>Goroutine 内正在进行 channel/mutex 等读写操作，但由于逻辑问题，某些情况下会被一直阻塞。</li>
-<li>Goroutine 内的业务逻辑进入死循环，资源一直无法释放。</li>
-<li>Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待。</li>
-</ul>
-<p>检测工具：uber-go/goleak</p>
-<h4 id="赋值是原子操作吗？"><a href="#赋值是原子操作吗？" class="headerlink" title="赋值是原子操作吗？"></a>赋值是原子操作吗？</h4><p>不是原子操作，会有并发安全问题。设计struct赋值的数据类型 都是并发不安全的 比如slice map等</p>
-<h4 id="time-Sleep-d-和-lt-time-After-d-有何区别？"><a href="#time-Sleep-d-和-lt-time-After-d-有何区别？" class="headerlink" title="time.Sleep(d)和&lt;-time.After(d)有何区别？"></a><code>time.Sleep(d)</code>和<code>&lt;-time.After(d)</code>有何区别？</h4><p>两者都会将当前的goroutine执行暂停一段时间。 区别在于<code>time.Sleep(d)</code>函数调用将使当前的协程进入睡眠子状态，但是当前协程的<a href="https://gfw.go101.org/article/control-flows-more.html#states-of-goroutine">（主）状态</a>依然为运行状态； 而通道接收<code>&lt;-time.After(d)</code>操作将使当前协程进入阻塞状态。</p>
-<h4 id="哪些类型不支持比较？"><a href="#哪些类型不支持比较？" class="headerlink" title="哪些类型不支持比较？"></a>哪些类型不支持比较？</h4><p>下列类型不支持比较：映射（map、切片、函数、包含不可比较字段的结构体类型、元素类型为不可比较类型的数组类型</p>
-<p>不支持比较的类型不能用做映射类型的键值类型。请注意：</p>
-<ul>
-<li>尽管映射，切片和函数值不支持比较，但是它们的值可以与类型不确定的<code>nil</code>标识符比较。</li>
-<li>如果两个接口值的动态类型相同且不可比较，那么在运行时<a href="https://gfw.go101.org/article/interface.html#comparison">比较这两个接口的值</a>会产生一个恐慌。</li>
-</ul>
-<h4 id="为什么两个nil值有时候会不相等？"><a href="#为什么两个nil值有时候会不相等？" class="headerlink" title="为什么两个nil值有时候会不相等？"></a>为什么两个<code>nil</code>值有时候会不相等？</h4><p>一个接口值可以看作是一个包裹非接口值的盒子。被包裹在一个接口值中的非接口值的类型必须实现了此接口值的类型。 在Go中，很多种类型的类型的零值都是用<code>nil</code>来表示的。 一个什么都没包裹的接口值为一个零值接口值，即nil接口值。 一个包裹着其它非接口类型的nil值的接口值并非什么都没包裹，所以它不是（或者说它不等于）一个nil接口值。</p>
-<p>当对一个nil接口值和一个nil非接口值进行比较时（假设它们可以比较），此nil非接口值将先被转换为nil接口值的类型，然后再进行比较； 此转换的结果为一个包裹了此nil非接口值的一个副本的接口值，此接口值不是（或者说它不等于）一个nil接口值，所以此比较不相等。</p>
-<h4 id="哪些值可以被取地址，哪些值不可以被取地址？"><a href="#哪些值可以被取地址，哪些值不可以被取地址？" class="headerlink" title="哪些值可以被取地址，哪些值不可以被取地址？"></a>哪些值可以被取地址，哪些值不可以被取地址？</h4><p>以下的值是不可以寻址的：</p>
-<ul>
-<li>字符串的字节元素</li>
-<li>映射元素</li>
-<li>接口值的动态值（类型断言的结果）</li>
-<li>常量（包括有名常量和字面量）</li>
-<li>声明的包级别函数</li>
-<li>方法（用做函数值）</li>
-<li>中间结果值<ul>
-<li>函数调用</li>
-<li>显式值转换</li>
-<li>各种操作，不包含指针解引用（dereference）操作，但是包含：<ul>
-<li>通道接收操作</li>
-<li>子字符串操作</li>
-<li>子切片操作</li>
-<li>加法、减法、乘法、以及除法等等。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>以下的值是可寻址的，因此可以被取地址：变量</p>
-<p>可寻址的结构体的字段</p>
-<ul>
-<li>可寻址的数组的元素</li>
-<li>任意切片的元素（无论是可寻址切片或不可寻址切片）</li>
-<li>指针解引用（dereference）操作</li>
-</ul>
-<h4 id="为什么映射元素不可被取地址？"><a href="#为什么映射元素不可被取地址？" class="headerlink" title="为什么映射元素不可被取地址？"></a>为什么映射元素不可被取地址？</h4><p>在Go中，映射的设计保证一个映射值在内存允许的情况下可以加入任意个条目。 另外为了防止一个映射中为其条目开辟的内存段支离破碎，官方标准编译器使用了哈希表来实现映射。 并且为了保证元素索引的效率，一个映射值的底层哈希表只为其中的所有条目维护一段连续的内存段。 因此，一个映射值随着其中的条目数量逐渐增加时，其维护的连续的内存段需要不断重新开辟来增容，并把原来内存段上的条目全部复制到新开辟的内存段上。 另外，即使一个映射值维护的内存段没有增容，某些哈希表实现也可能在当前内存段中移动其中的条目。 总之，映射中的元素的地址会因为各种原因而改变。 如果映射元素可以被取地址，则Go运行时（runtime）必须在元素地址改变的时候修改所有存储了元素地址的指针值。 这极大得增加了Go编译器和运行时的实现难度，并且严重影响了程序运行效率。 因此，目前，Go中禁止取映射元素的地址。</p>
-<p>映射元素不可被取地址的另一个原因是表达式<code>aMap[key]</code>可能返回一个存储于<code>aMap</code>中的元素，也可能返回一个不存储于其中的元素零值。 这意味着表达式<code>aMap[key]</code>在<code>(&amp;aMap[key]).Modify()</code>调用执行之后可能仍然被估值为元素零值。 这将使很多人感到困惑，因此在Go中禁止取映射元素的地址。</p>
-<h4 id="函数返回局部变量的指针是否安全？"><a href="#函数返回局部变量的指针是否安全？" class="headerlink" title="函数返回局部变量的指针是否安全？"></a>函数返回局部变量的指针是否安全？</h4><p>是的，在Go中这是绝对安全的。</p>
-<p>支持栈的Go编译器将会对每个局部变量进行逃逸分析。 对于官方标准编译器来说，如果一个值可以在编译时刻被断定它在运行时刻仅会在一个协程中被使用，则此值将被开辟在（此协程的）栈上；否则此值将被开辟在堆上。</p>
-]]></content>
-      <tags>
-        <tag>GO</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TCP介绍</title>
     <url>/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：</p>
@@ -173,8 +91,6 @@
 <li>基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。</li>
 <li>可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。</li>
 </ul>
-<span id="more"></span>
-
 <h2 id="TCP报文段"><a href="#TCP报文段" class="headerlink" title="TCP报文段"></a>TCP报文段</h2><p><img src="https://102er.github.io/images/tcp-bw.png" alt="osi"></p>
 <ul>
 <li>端口号：每个tcp报文包含源和目的端口号，2字节的端口号，端口号+ip可以组成一个socket</li>
@@ -267,24 +183,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2021/09/01/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-  </entry>
-  <entry>
     <title>prometheus</title>
     <url>/2021/08/19/prometheus/</url>
     <content><![CDATA[]]></content>
@@ -317,11 +215,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>redis</title>
-    <url>/2021/08/19/redis/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>二分查找</title>
     <url>/2021/08/19/%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</url>
     <content><![CDATA[]]></content>
@@ -345,5 +238,96 @@
     <title>rabbitMQ介绍</title>
     <url>/2021/08/19/rabbitMQ%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>GO 99问</title>
+    <url>/2021/08/19/GO%2099%E9%97%AE/</url>
+    <content><![CDATA[<h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
+<ul>
+<li>一个<code>T</code>类型的值可以调用为<code>*T</code>类型声明的方法，但是仅当此<code>T</code>的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此<code>T</code>值的地址。 因为不是任何<code>T</code>值都是可寻址的，所以并非任何<code>T</code>值都能够调用为类型<code>*T</code>声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址）</li>
+<li>一个<code>*T</code>类型的值可以调用为类型<code>T</code>声明的方法。 这是因为解引用指针总是合法的。 这种便利不仅仅是一个语法糖，它也是一种固有的规则。</li>
+</ul>
+<p>所以很合理的， <code>*T</code>的方法集总是<code>T</code>方法集的超集，但反之不然。</p>
+<p>事实上，你可以认为对于每一个为类型<code>T</code>声明的方法，编译器都会为类型<code>*T</code>自动隐式声明一个同名和同签名的方法。</p>
+<span id="more"></span>
+
+<h4 id="for和range区别"><a href="#for和range区别" class="headerlink" title="for和range区别"></a>for和range区别</h4><p>range 在迭代过程中返回的是迭代值的拷贝，如果每次迭代的元素的内存占用很低，那么 for 和 range 的性能几乎是一样。但是如果迭代的元素内存占用较高，例如一个包含很多属性的 struct 结构体，那么 for 的性能将显著地高于 range，有时候甚至会有上千倍的性能差异。对于这种场景，建议使用 for，如果使用 range，建议只迭代下标，通过下标访问迭代值，这种使用方式和 for 就没有区别了。如果想使用 range 同时迭代下标和值，则需要将切片/数组的元素改为指针，才能不影响性能。</p>
+<h4 id="数组和切片区别"><a href="#数组和切片区别" class="headerlink" title="数组和切片区别"></a>数组和切片区别</h4><p>数组是不可变的数据类型，线程安全</p>
+<p>切片是动态可变的数据结构，包含长度，容量以及指向数组的应用，线程不安全</p>
+<h4 id="rune数据类型"><a href="#rune数据类型" class="headerlink" title="rune数据类型"></a>rune数据类型</h4><p>rune是Go语言中一种特殊的数据类型,它是int32的别名,几乎在所有方面等同于int32,用于区分字符值和整数值。</p>
+<p>补充：golang中的字符有两种，uint8（byte）代表ASCII的一个字符，rune代表一个utf-8字符。</p>
+<p>理解：当需要处理中文、日文或者其他复合字符时，则需要用到rune类型，rune实际是一个int32.</p>
+<h4 id="init函数"><a href="#init函数" class="headerlink" title="init函数"></a>init函数</h4><ul>
+<li>不同包的 <code>init()</code>执行顺序，按照 <code>导入包的依赖关系</code> 决定</li>
+<li><code>init()</code> 不能被其他函数调用，而自动 <code>在main函数执行前</code> 被调用</li>
+<li>执行顺序：import –&gt; const –&gt; var –&gt; init() –&gt; main()</li>
+</ul>
+<h4 id="make和new的区别"><a href="#make和new的区别" class="headerlink" title="make和new的区别"></a>make和new的区别</h4><ul>
+<li>new可以初始化所有类型，为类型申请一块内存空间并返回一个指针</li>
+<li>make只能用于map ，channel，slice初始化，返回的是类型引用</li>
+</ul>
+<h4 id="什么是协程泄露-Goroutine-Leak-？"><a href="#什么是协程泄露-Goroutine-Leak-？" class="headerlink" title="什么是协程泄露(Goroutine Leak)？"></a>什么是协程泄露(Goroutine Leak)？</h4><p>go协程正常结束后，会被gc回收，但是如果一些操作不当，就会引起协程一直处于阻塞状态或者永远运行，这种情况就是协程泄漏了，他会一直消耗资源，直到系统奔溃。泄漏的场景：</p>
+<ul>
+<li>Goroutine 内正在进行 channel/mutex 等读写操作，但由于逻辑问题，某些情况下会被一直阻塞。</li>
+<li>Goroutine 内的业务逻辑进入死循环，资源一直无法释放。</li>
+<li>Goroutine 内的业务逻辑进入长时间等待，有不断新增的 Goroutine 进入等待。</li>
+</ul>
+<p>检测工具：uber-go/goleak</p>
+<h4 id="赋值是原子操作吗？"><a href="#赋值是原子操作吗？" class="headerlink" title="赋值是原子操作吗？"></a>赋值是原子操作吗？</h4><p>不是原子操作，会有并发安全问题。设计struct赋值的数据类型 都是并发不安全的 比如slice map等</p>
+<h4 id="time-Sleep-d-和-lt-time-After-d-有何区别？"><a href="#time-Sleep-d-和-lt-time-After-d-有何区别？" class="headerlink" title="time.Sleep(d)和&lt;-time.After(d)有何区别？"></a><code>time.Sleep(d)</code>和<code>&lt;-time.After(d)</code>有何区别？</h4><p>两者都会将当前的goroutine执行暂停一段时间。 区别在于<code>time.Sleep(d)</code>函数调用将使当前的协程进入睡眠子状态，但是当前协程的<a href="https://gfw.go101.org/article/control-flows-more.html#states-of-goroutine">（主）状态</a>依然为运行状态； 而通道接收<code>&lt;-time.After(d)</code>操作将使当前协程进入阻塞状态。</p>
+<h4 id="哪些类型不支持比较？"><a href="#哪些类型不支持比较？" class="headerlink" title="哪些类型不支持比较？"></a>哪些类型不支持比较？</h4><p>下列类型不支持比较：映射（map、切片、函数、包含不可比较字段的结构体类型、元素类型为不可比较类型的数组类型</p>
+<p>不支持比较的类型不能用做映射类型的键值类型。请注意：</p>
+<ul>
+<li>尽管映射，切片和函数值不支持比较，但是它们的值可以与类型不确定的<code>nil</code>标识符比较。</li>
+<li>如果两个接口值的动态类型相同且不可比较，那么在运行时<a href="https://gfw.go101.org/article/interface.html#comparison">比较这两个接口的值</a>会产生一个恐慌。</li>
+</ul>
+<h4 id="为什么两个nil值有时候会不相等？"><a href="#为什么两个nil值有时候会不相等？" class="headerlink" title="为什么两个nil值有时候会不相等？"></a>为什么两个<code>nil</code>值有时候会不相等？</h4><p>一个接口值可以看作是一个包裹非接口值的盒子。被包裹在一个接口值中的非接口值的类型必须实现了此接口值的类型。 在Go中，很多种类型的类型的零值都是用<code>nil</code>来表示的。 一个什么都没包裹的接口值为一个零值接口值，即nil接口值。 一个包裹着其它非接口类型的nil值的接口值并非什么都没包裹，所以它不是（或者说它不等于）一个nil接口值。</p>
+<p>当对一个nil接口值和一个nil非接口值进行比较时（假设它们可以比较），此nil非接口值将先被转换为nil接口值的类型，然后再进行比较； 此转换的结果为一个包裹了此nil非接口值的一个副本的接口值，此接口值不是（或者说它不等于）一个nil接口值，所以此比较不相等。</p>
+<h4 id="哪些值可以被取地址，哪些值不可以被取地址？"><a href="#哪些值可以被取地址，哪些值不可以被取地址？" class="headerlink" title="哪些值可以被取地址，哪些值不可以被取地址？"></a>哪些值可以被取地址，哪些值不可以被取地址？</h4><p>以下的值是不可以寻址的：</p>
+<ul>
+<li>字符串的字节元素</li>
+<li>映射元素</li>
+<li>接口值的动态值（类型断言的结果）</li>
+<li>常量（包括有名常量和字面量）</li>
+<li>声明的包级别函数</li>
+<li>方法（用做函数值）</li>
+<li>中间结果值<ul>
+<li>函数调用</li>
+<li>显式值转换</li>
+<li>各种操作，不包含指针解引用（dereference）操作，但是包含：<ul>
+<li>通道接收操作</li>
+<li>子字符串操作</li>
+<li>子切片操作</li>
+<li>加法、减法、乘法、以及除法等等。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>以下的值是可寻址的，因此可以被取地址：变量</p>
+<p>可寻址的结构体的字段</p>
+<ul>
+<li>可寻址的数组的元素</li>
+<li>任意切片的元素（无论是可寻址切片或不可寻址切片）</li>
+<li>指针解引用（dereference）操作</li>
+</ul>
+<h4 id="为什么映射元素不可被取地址？"><a href="#为什么映射元素不可被取地址？" class="headerlink" title="为什么映射元素不可被取地址？"></a>为什么映射元素不可被取地址？</h4><p>在Go中，映射的设计保证一个映射值在内存允许的情况下可以加入任意个条目。 另外为了防止一个映射中为其条目开辟的内存段支离破碎，官方标准编译器使用了哈希表来实现映射。 并且为了保证元素索引的效率，一个映射值的底层哈希表只为其中的所有条目维护一段连续的内存段。 因此，一个映射值随着其中的条目数量逐渐增加时，其维护的连续的内存段需要不断重新开辟来增容，并把原来内存段上的条目全部复制到新开辟的内存段上。 另外，即使一个映射值维护的内存段没有增容，某些哈希表实现也可能在当前内存段中移动其中的条目。 总之，映射中的元素的地址会因为各种原因而改变。 如果映射元素可以被取地址，则Go运行时（runtime）必须在元素地址改变的时候修改所有存储了元素地址的指针值。 这极大得增加了Go编译器和运行时的实现难度，并且严重影响了程序运行效率。 因此，目前，Go中禁止取映射元素的地址。</p>
+<p>映射元素不可被取地址的另一个原因是表达式<code>aMap[key]</code>可能返回一个存储于<code>aMap</code>中的元素，也可能返回一个不存储于其中的元素零值。 这意味着表达式<code>aMap[key]</code>在<code>(&amp;aMap[key]).Modify()</code>调用执行之后可能仍然被估值为元素零值。 这将使很多人感到困惑，因此在Go中禁止取映射元素的地址。</p>
+<h4 id="函数返回局部变量的指针是否安全？"><a href="#函数返回局部变量的指针是否安全？" class="headerlink" title="函数返回局部变量的指针是否安全？"></a>函数返回局部变量的指针是否安全？</h4><p>是的，在Go中这是绝对安全的。</p>
+<p>支持栈的Go编译器将会对每个局部变量进行逃逸分析。 对于官方标准编译器来说，如果一个值可以在编译时刻被断定它在运行时刻仅会在一个协程中被使用，则此值将被开辟在（此协程的）栈上；否则此值将被开辟在堆上。</p>
+]]></content>
+      <tags>
+        <tag>GO</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis数据类型</title>
+    <url>/2021/08/19/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)。</p>
+<span id="more"></span>
+]]></content>
+      <tags>
+        <tag>redis</tag>
+      </tags>
   </entry>
 </search>
