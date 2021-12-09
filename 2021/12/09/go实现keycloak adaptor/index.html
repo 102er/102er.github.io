@@ -20,16 +20,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="概述IAM：Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。 keycloak：是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。 实现keycloak并没有提供go的接入适配器，所以">
+<meta name="description" content="概述IAM：Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。 keycloak：是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="go实现keycloak adaptor">
 <meta property="og:url" content="http://example.com/2021/12/09/go%E5%AE%9E%E7%8E%B0keycloak%20adaptor/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="概述IAM：Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。 keycloak：是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。 实现keycloak并没有提供go的接入适配器，所以">
+<meta property="og:description" content="概述IAM：Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。 keycloak：是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://102er.github.io/uploads/iam-login.png">
 <meta property="article:published_time" content="2021-12-09T02:11:41.000Z">
-<meta property="article:modified_time" content="2021-12-09T09:50:42.976Z">
+<meta property="article:modified_time" content="2021-12-09T10:00:35.521Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="认证">
@@ -240,7 +240,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-12-09 10:11:41 / 修改时间：17:50:42" itemprop="dateCreated datePublished" datetime="2021-12-09T10:11:41+08:00">2021-12-09</time>
+      <time title="创建时间：2021-12-09 10:11:41 / 修改时间：18:00:35" itemprop="dateCreated datePublished" datetime="2021-12-09T10:11:41+08:00">2021-12-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -264,6 +264,8 @@
     <div class="post-body" itemprop="articleBody">
         <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>IAM：</strong>Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。</p>
 <p><strong>keycloak：</strong>是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。</p>
+<span id="more"></span>
+
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>keycloak并没有提供go的接入适配器，所以需要我们自行实现。接入keycloak有两种常用的认证方式：</p>
 <ol>
 <li>OpenID Connect（oidc）：在oauth2.0上的一种授权认证协议</li>

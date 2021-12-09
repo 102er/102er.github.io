@@ -290,6 +290,8 @@
     <url>/2021/12/09/go%E5%AE%9E%E7%8E%B0keycloak%20adaptor/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>IAM：</strong>Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。</p>
 <p><strong>keycloak：</strong>是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。</p>
+<span id="more"></span>
+
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>keycloak并没有提供go的接入适配器，所以需要我们自行实现。接入keycloak有两种常用的认证方式：</p>
 <ol>
 <li>OpenID Connect（oidc）：在oauth2.0上的一种授权认证协议</li>
