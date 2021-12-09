@@ -22,8 +22,8 @@
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="TCP介绍">
-<meta property="og:url" content="http://example.com/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:title" content="TCP三次握手和四次挥手">
+<meta property="og:url" content="http://example.com/2021/08/19/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/index.html">
 <meta property="og:site_name" content="102er">
 <meta property="og:description" content="简介TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：   面向连接：两个端必须建立tcp连接，才能通讯交换数据。 基于字节流：tcp连接双方的数据交换是以字节构成的有序但无结构的字节流。 可靠性：通过连接管理，流量控制，拥塞控制，超时重传机制，序号和确认序号等机制保证传输可靠。">
 <meta property="og:locale" content="zh_CN">
@@ -32,21 +32,21 @@
 <meta property="og:image" content="https://102er.github.io/images/tcp-3ws.png">
 <meta property="og:image" content="https://102er.github.io/images/tcp-4hs.png">
 <meta property="article:published_time" content="2021-08-19T06:26:02.000Z">
-<meta property="article:modified_time" content="2021-12-08T15:01:03.628Z">
+<meta property="article:modified_time" content="2021-12-09T02:08:10.887Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://102er.github.io/images/osi-model.png">
 
 
-<link rel="canonical" href="http://example.com/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/">
+<link rel="canonical" href="http://example.com/2021/08/19/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/","path":"2021/08/19/TCP介绍/","title":"TCP介绍"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/08/19/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/","path":"2021/08/19/TCP三次握手和四次挥手/","title":"TCP三次握手和四次挥手"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>TCP介绍 | 102er</title>
+<title>TCP三次握手和四次挥手 | 102er</title>
   
 
 
@@ -173,12 +173,12 @@
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -217,7 +217,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/TCP%E4%BB%8B%E7%BB%8D/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpeg">
@@ -230,7 +230,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          TCP介绍
+          TCP三次握手和四次挥手
         </h1>
 
         <div class="post-meta-container">
@@ -248,7 +248,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-08 23:01:03" itemprop="dateModified" datetime="2021-12-08T23:01:03+08:00">2021-12-08</time>
+      <time title="修改时间：2021-12-09 10:08:10" itemprop="dateModified" datetime="2021-12-09T10:08:10+08:00">2021-12-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -326,10 +326,10 @@
 <h3 id="SYN-FLOOD攻击"><a href="#SYN-FLOOD攻击" class="headerlink" title="SYN FLOOD攻击"></a>SYN FLOOD攻击</h3><p>伪造大量的源ip地址，分别向服务端发送大量的syn包，服务端返回的SYN/ACK包，因为源地址是伪造的，所以不会有应答，服务端没有收到应答，会重试并且等待一个syn time，如果超时则丢弃这个连接。这种半开连接会消耗服务端的资源，导致服务端无法正常服务。</p>
 <h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a><strong>四次挥手</strong></h2><p><img src="https://102er.github.io/images/tcp-4hs.png" alt="osi"></p>
 <ol>
-<li>客户端发送关闭连接的报文段，FIN 标志位1，请求关闭连接，并停止发送数据。序号字段 seq = x (等于之前发送的所有数据的最后一个字节的序号加一)，然后客户端会进入 FIN-WAIT-1 状态，等待来自服务器的确认报文。</li>
-<li>服务器收到 FIN 报文后，发回确认报文，ACK = 1， ack = x + 1，并带上自己的序号 seq = y，然后服务器就进入 CLOSE-WAIT 状态。服务器还会通知上层的应用程序对方已经释放连接，此时 TCP 处于半关闭状态，也就是说客户端已经没有数据要发送了，但是服务器还可以发送数据，客户端也还能够接收。</li>
+<li>客户端发送连接释放报文段并且停止发送数据，此时标志位：FIN 标志位1，序号字段 seq = x (等于之前发送的所有数据的最后一个字节的序号加一)，然后客户端会进入 FIN-WAIT-1 状态，等待来自服务器的确认报文。<u>TCP规定，FIN报文段即使不携带数据，也要消耗一个序号。</u></li>
+<li>服务器收到 FIN 报文后，发回确认报文，此时标志位：ACK = 1， 确认序号段 ack = x + 1，并带上自己的序号 seq = y，此时，服务器就进入 CLOSE-WAIT 状态。服务器还会通知上层的应用程序对方已经释放连接，此时 TCP 处于半关闭状态，即使客户端没有数据要发送，但是服务器还可以发送数据，客户端也还能够接收。</li>
 <li>客户端收到服务器的 ACK 报文段后随即进入 FIN-WAIT-2 状态，此时还能收到来自服务器的数据，直到收到 FIN 报文段。</li>
-<li>服务器发送完所有数据后，会向客户端发送 FIN 报文段，各字段值如图所示，随后服务器进入 LAST-ACK 状态，等待来自客户端的确认报文段。</li>
+<li>服务器发送完所有数据后，就向客户端发送连接释放报文，此时标志位：ACK=1,FIN=1,序号为seq=z，确认序号ack=x+1，随后服务器进入 LAST-ACK 状态，等待来自客户端的确认报文段。</li>
 <li>客户端收到来自服务器的 FIN 报文段后，向服务器发送 ACK 报文，随后进入 TIME-WAIT 状态，等待 2MSL(2 * Maximum Segment Lifetime，两倍的报文段最大存活时间) ，这是任何报文段在被丢弃前能在网络中存在的最长时间，常用值有30秒、1分钟和2分钟。如无特殊情况，客户端会进入 CLOSED 状态。</li>
 <li>服务器在接收到客户端的 ACK 报文后会随即进入 CLOSED 状态，由于没有等待时间，一般而言，服务器比客户端更早进入 CLOSED 状态。</li>
 </ol>
