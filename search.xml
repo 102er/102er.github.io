@@ -288,7 +288,17 @@
   <entry>
     <title>go实现keycloak adaptor</title>
     <url>/2021/12/09/go%E5%AE%9E%E7%8E%B0keycloak%20adaptor/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>IAM：</strong>Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。</p>
+<p><strong>keycloak：</strong>是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>keycloak并没有提供go的接入适配器，所以需要我们自行实现。接入keycloak有两种常用的认证方式：</p>
+<ol>
+<li>OpenID Connect（oidc）：在oauth2.0上的一种授权认证协议</li>
+<li>SAML：认证授权协议</li>
+</ol>
+<p>两种方式都可接入，oidc会相对简单一点。（当然，还得看我们iam是否有配置两种协议的endpoint）</p>
+<p>我们选择用oidc的认证方式接入IAM。OIDC是OpenID Connect的简称，OIDC=(Identity, Authentication) + OAuth 2.0。它在OAuth2上构建了一个身份层，是一个基于OAuth2协议的身份认证标准协议。具体可以参考文档：<a href="https://www.cnblogs.com/linianhui/p/openid-connect-core.html#auto-id-0">https://www.cnblogs.com/linianhui/p/openid-connect-core.html#auto-id-0</a></p>
+<p>go生态有go-oidc和oauth2.0组件，可以帮助我们解决和iam交互工作，我们只需负责提供认证流程需要的接口即可。具体看下关键实现的代码：</p>
+]]></content>
       <categories>
         <category>GO</category>
       </categories>
