@@ -36,8 +36,8 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>GO</tag>
         <tag>并发编程</tag>
+        <tag>GO开发</tag>
       </tags>
   </entry>
   <entry>
@@ -80,8 +80,12 @@
 <li>情形四：“M个接收者和一个发送者”情形的一个变种：用来传输数据的通道的关闭请求由第三方发出</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
       <tags>
         <tag>GO</tag>
+        <tag>并发编程</tag>
       </tags>
   </entry>
   <entry>
@@ -289,12 +293,12 @@
     <title>go实现keycloak adaptor</title>
     <url>/2021/12/09/go%E5%AE%9E%E7%8E%B0keycloak%20adaptor/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>IAM：</strong>Identity and Access Management的缩写，即身份识别与访问管理，具有单点登录(SSO-Single Sign On)，认证管理，基于策略的集中式授权和审计，动态授权等功能。</p>
-<p><strong>keycloak：</strong>是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO，开放app接口的授权等。</p>
+<p><strong>keycloak：</strong>是IAM的解决方案，用于管理用户的注册、登录、单点登录Single Sign On（SSO）、开放app接口的授权等。</p>
 <span id="more"></span>
 
 <h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>keycloak并没有提供go的接入适配器，所以需要我们自行实现。接入keycloak有两种常用的认证方式：</p>
 <ol>
-<li>OpenID Connect（oidc）：在oauth2.0上的一种授权认证协议</li>
+<li>OpenID Connect（oidc）：在oauth2.0上的一种授权认证协议，OIDC使用OAuth2的授权服务器来为第三方客户端提供用户的身份认证，并把对应的身份认证信息传递给客户端，且可以适用于各种类型的客户端（比如服务端应用，移动APP，JS应用），且完全兼容OAuth2，也就是说你搭建了一个OIDC的服务后，也可以当作一个OAuth2的服务来用。</li>
 <li>SAML：认证授权协议</li>
 </ol>
 <p>两种方式都可接入，oidc会相对简单一点。（当然，还得看我们iam是否有配置两种协议的endpoint）</p>
@@ -309,7 +313,6 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>go</tag>
         <tag>认证</tag>
       </tags>
   </entry>
@@ -392,6 +395,17 @@
       </categories>
       <tags>
         <tag>TCP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go的init函数</title>
+    <url>/2021/12/10/go%E7%9A%84init%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
+      <tags>
+        <tag>go开发</tag>
       </tags>
   </entry>
 </search>
