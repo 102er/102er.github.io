@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="介绍调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go调度模型-GMP">
+<meta property="og:url" content="http://example.com/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/index.html">
+<meta property="og:site_name" content="102er">
+<meta property="og:description" content="介绍调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-19T12:17:53.000Z">
+<meta property="article:modified_time" content="2021-12-10T07:36:34.496Z">
+<meta property="article:author" content="blossom">
+<meta property="article:tag" content="并发编程">
+<meta property="article:tag" content="GO开发">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/","path":"2020/11/19/go调度模型-GMP/","title":"go调度模型-GMP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>go调度模型-GMP | 102er</title>
+  
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">102er</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">当你与困难面对面时，等待你的是一个新发现</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91-amp-%E5%B9%B6%E8%A1%8C"><span class="nav-number">1.1.</span> <span class="nav-text">并发&amp;并行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B-amp-%E7%BA%BF%E7%A8%8B-amp-%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">进程 &amp; 线程 &amp; 协程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GMP%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">GMP模型</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="blossom"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">blossom</p>
+  <div class="site-description" itemprop="description">別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go调度模型-GMP
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-19 20:17:53" itemprop="dateCreated datePublished" datetime="2020-11-19T20:17:53+08:00">2020-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-10 15:36:34" itemprop="dateModified" datetime="2021-12-10T15:36:34+08:00">2021-12-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
+<span id="more"></span>
+
+<h4 id="并发-amp-并行"><a href="#并发-amp-并行" class="headerlink" title="并发&amp;并行"></a><strong>并发</strong>&amp;并行</h4><p><strong>并发：</strong>某一段时间，几个程序在同一个cpu上运行，但任意一个时间点只有一个程序在运行。解决程序排队等待的问题，如果一个程序发生阻塞，那么其他程序仍可以正常的执行。站在cpu的角度上，并发实际也是串行的。</p>
+<p><strong>并行</strong>：需要硬件支持，系统必须具备多个cpu，才能有并行的能力。不同cpu在同一时间运行不同程序，互不抢占资源，实现真正的同时执行。</p>
+<p><strong>区别</strong>：并发只是在宏观上给人感觉多个程序在同时运行，但实际单cpu系统中，每一时刻只有一个程序在运行。而并行关键是多核【同时】执行。</p>
+<h4 id="进程-amp-线程-amp-协程"><a href="#进程-amp-线程-amp-协程" class="headerlink" title="进程 &amp; 线程 &amp; 协程"></a><strong>进程</strong> &amp; 线程 &amp; 协程</h4><p><strong>进程：</strong>用于划分程序运行时所需要的资源(IO资源，信号处理，内存资源等)，是程序运行的基本资源单位(最小单位)；不共享堆栈，由操作系统调度，属于抢占式调度，有三个状态：等待，就绪和运行状态。进程之间是互相隔离，各自拥有独立的系统资源，更加安全但是进程间通信不方便。</p>
+<p>进程间通讯方式：管道，信号，消息队列，共享内存，socket</p>
+<p><strong>线程</strong>：系统进行运算调度的最小单位，一个进程至少包含一个线程(主线程)；线程由线程ID，当前指令指针，寄存器集合和堆栈组成，不拥有系统资源，进程内的所有线程共享进程资源；共享堆，不共享栈，由操作系统调度，属于抢占式调度。</p>
+<p>线程间通讯方式：互斥量，信号量</p>
+<p><strong>协程</strong>：用户级线程，是执行流，并不是运行实体，内核并不知道协程存在，共享堆，不共享栈，拥有自己的寄存器上下文和栈，由用户程序进程调度，是协作式调度，需要协程自己主动把控制权转让出去。</p>
+<p><strong>区别</strong>：进程是cpu资源分配的基本单位，线程是独立运行和独立调度的基本单位；进程拥有自己的资源空间，一个进程包含了N个线程，线程和cpu资源分配无关，多个线程共享同一进程内的资源；线程的调度与切换比进程快很多(进程切换涉及资源切换，但是线程切换不需要)；协程和线程的区别，协程调度发生在用户态，无需线程上下文切换开销，而线程调度发生在内核态，所以协程调度会更加轻量。</p>
+<h3 id="GMP模型"><a href="#GMP模型" class="headerlink" title="GMP模型"></a>GMP模型</h3><p><strong>M</strong>：代表OS线程，一个M就是一个线程，真正的执行者，数量比P多，M创建之后，会去P的free list寻找可用P进行绑定，如果没有绑定到P，则进入阻塞状态</p>
+<p><strong>G</strong>：go func出来的goroutine，代表一个用户代码的只执行流，拥有独立的栈空间</p>
+<p><strong>P</strong>：默认机器的核数，表示执行所需要的资源，P的数量代表最大并行程度，一个P对应多个M，但是同一时刻，只有一个M与P绑定；每个P都有一个本地存放G的队列，M和P绑定时，如果新生成的G会放入本地runq中，本地队列满了，会截取本地队列一半的G放入全局队列中。p减少了锁竞争以及增加了资源利用率。</p>
+<p><strong>调度流程如下：</strong></p>
+<ol>
+<li>go func创建一个G对象，会保存在全局runq或者本地的runq（先放在生成G的线程runq下，如果队列满了，会放到全局runq）</li>
+<li>G 只能运行在 M 中，一个 M 必须持有一个 P，M 与 P 是 1：1 的关系。M 会从 P 的本地队列弹出一个可执行状态的 G 来执行，如果 P 的本地队列为空，就会想其他的 MP 组合偷取一个可执行的 G 来执行；</li>
+<li>当go func的时候，G去唤醒一个M，M寻找是否有空闲的P，如果有则将该G对象移动到它本身</li>
+<li>M执行一个调度循环：<ol>
+<li>调度G对象，G对象来源：1/61的几率从全局队来，60/61的几率在本地队列寻找G</li>
+<li>执行 -&gt; 清理线程 -&gt; 继续寻找新的G</li>
+</ol>
+</li>
+<li>p的某个G发生网络调用(或者系统调用，因为和系统交互是线程，所以当前M是阻塞的)，那么P和M会解绑，P会带着其他G去寻找新的M(找空闲的M，如果没有则new一个出来)</li>
+<li>当 M 系统调用结束时候，这个 G 会尝试获取一个空闲的 P 执行，并放入到这个 P 的本地队列。如果获取不到 P，那么这个线程 M 变成休眠状态， 加入到空闲线程中，然后这个 G 会被放入全局队列中。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag"># 并发编程</a>
+              <a href="/tags/GO%E5%BC%80%E5%8F%91/" rel="tag"># GO开发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/08/19/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" rel="prev" title="redis数据类型">
+                  <i class="fa fa-chevron-left"></i> redis数据类型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/03/23/prometheus/" rel="next" title="prometheus">
+                  prometheus <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">blossom</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdn.jsdelivr.net/npm/ribbon.js@1.0.2/dist/ribbon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"102er","repo":"102er-blog-comments","client_id":"26d80de61caa9f17f9c1","client_secret":"897fbdc1507311b4a6b1c809895fb51924ba153a","admin_user":"102er","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"6d6df663f00d8fe0390a5e7b1eb30c12"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
