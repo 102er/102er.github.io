@@ -417,7 +417,7 @@
   </entry>
   <entry>
     <title>go获取ip地理信息</title>
-    <url>/2021/12/14/go%E8%8E%B7%E5%8F%96ip%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF/</url>
+    <url>/2021/06/14/go%E8%8E%B7%E5%8F%96ip%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MMDB即Maxmind DB，是一个设计用于存储IPv4和IPv6的数据信息的数据库，mmdb文件是一个二进制格式的文件，它使用一个<a href="https://so.csdn.net/so/search?from=pc_blog_highlight&q=%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE">二分查找</a>树加速IP信息的查询。ps：网上有一些免费但是更新不及时的ip库，如果用于公司商业化，建议购买ip库。</p>
 <h2 id="GO解析mmdb文件"><a href="#GO解析mmdb文件" class="headerlink" title="GO解析mmdb文件"></a>GO解析mmdb文件</h2><p>GO基于IP获取地理信息有两个库：</p>
 <ul>
@@ -432,6 +432,39 @@
       </categories>
       <tags>
         <tag>GO开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go实现动态鉴权</title>
+    <url>/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
+      <tags>
+        <tag>go开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go参数校验</title>
+    <url>/2021/12/15/go%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
+      <tags>
+        <tag>go开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go国际化实现</title>
+    <url>/2021/09/15/go%E5%AE%9E%E7%8E%B0%E5%9B%BD%E9%99%85%E5%8C%96/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
+      <tags>
+        <tag>go开发</tag>
       </tags>
   </entry>
 </search>
