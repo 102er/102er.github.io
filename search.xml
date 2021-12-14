@@ -145,7 +145,7 @@
   </entry>
   <entry>
     <title>TCP三次握手和四次挥手</title>
-    <url>/2021/08/09/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</url>
+    <url>/2021/06/09/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>TCP 是一种面向连接的、可靠的、基于字节流的传输层通信协议，位于网络分层模型的传输层：</p>
 <p><img src="https://102er.github.io/images/osi-model.png" alt="osi"></p>
 <ul>
@@ -395,7 +395,7 @@
   </entry>
   <entry>
     <title>go初始化函数-init</title>
-    <url>/2021/12/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/</url>
+    <url>/2020/04/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/</url>
     <content><![CDATA[<h2 id="init-函数是什么？"><a href="#init-函数是什么？" class="headerlink" title="init()函数是什么？"></a>init()函数是什么？</h2><p> <code>init()</code> 函数是隐式调用的，即会在包引入就执行，在编译的时候，已经确保 <code>init</code> 会在 <code>main</code>执行之前就被调用。</p>
 <h2 id="函数特点"><a href="#函数特点" class="headerlink" title="函数特点"></a>函数特点</h2><ul>
 <li>程序运行前，进行包的初始化工作</li>
