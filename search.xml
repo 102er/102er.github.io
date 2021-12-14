@@ -394,9 +394,15 @@
       </tags>
   </entry>
   <entry>
-    <title>go初始化函数init</title>
+    <title>go初始化函数-init</title>
     <url>/2021/12/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h2 id="init-函数是什么？"><a href="#init-函数是什么？" class="headerlink" title="init()函数是什么？"></a>init()函数是什么？</h2><p> <code>init()</code> 函数是隐式调用的，即会在包引入就执行，在编译的时候，已经确保 <code>init</code> 会在 <code>main</code>执行之前就被调用。</p>
+<h2 id="函数特点"><a href="#函数特点" class="headerlink" title="函数特点"></a>函数特点</h2><ul>
+<li>程序运行前，进行包的初始化工作</li>
+<li>每个包，每个go文件可以拥有多个init函数</li>
+<li>没有参数，不能被其他函数调用，是在main函数执行前自动被调用</li>
+</ul>
+<h2 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h2>]]></content>
       <categories>
         <category>GO</category>
       </categories>
