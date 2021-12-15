@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,6 +208,69 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/15/go%E5%8D%8F%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/15/go%E5%8D%8F%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">go协程池实现</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-15 00:23:59" itemprop="dateCreated datePublished" datetime="2021-12-15T00:23:59+08:00">2021-12-15</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/12/15/go%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -233,7 +296,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-12-15 00:17:53 / 修改时间：00:18:43" itemprop="dateCreated datePublished" datetime="2021-12-15T00:17:53+08:00">2021-12-15</time>
+      <time title="创建时间：2021-12-15 00:17:53 / 修改时间：23:50:17" itemprop="dateCreated datePublished" datetime="2021-12-15T00:17:53+08:00">2021-12-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -255,7 +318,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p>go常用 <a target="_blank" rel="noopener" href="https://github.com/go-playground/validator">validator</a> 进行字段参数校验，其内置了很多常用的字段参数校验方法，同时支持注册自定义方案。v10版本有支持验证结果的国际化。</p>
+<p>基础功能实现代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> validator</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/go-playground/locales/en&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/go-playground/locales/zh&quot;</span></span><br><span class="line">	ut <span class="string">&quot;github.com/go-playground/universal-translator&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/go-playground/validator/v10&quot;</span></span><br><span class="line">	en_translations <span class="string">&quot;github.com/go-playground/validator/v10/translations/en&quot;</span></span><br><span class="line">	zh_translations <span class="string">&quot;github.com/go-playground/validator/v10/translations/zh&quot;</span></span><br><span class="line">	<span class="string">&quot;reflect&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	valid            *validator.Validate</span><br><span class="line">	uni              *ut.UniversalTranslator</span><br><span class="line">	enTrans, zhTrans ut.Translator</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> found <span class="keyword">bool</span></span><br><span class="line">	valid = validator.New() <span class="comment">//验证器初始化</span></span><br><span class="line">	ent := en.New()</span><br><span class="line">	uni = ut.New(ent, ent)</span><br><span class="line">	enTrans, found = uni.GetTranslator(<span class="string">&quot;en&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> !found &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;en translation not found&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	zht := zh.New()</span><br><span class="line">	uni = ut.New(zht, zht)</span><br><span class="line">	zhTrans, found = uni.GetTranslator(<span class="string">&quot;zh&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> !found &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;zh translation not found&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//注册英文翻译</span></span><br><span class="line">	err := en_translations.RegisterDefaultTranslations(valid, enTrans)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//注册中文翻译</span></span><br><span class="line">	err = zh_translations.RegisterDefaultTranslations(valid, zhTrans)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//自定义校验函数</span></span><br><span class="line">	<span class="comment">// ....</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ValidateData 验证方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ValidateData</span><span class="params">(l <span class="keyword">string</span>, dataStruct <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	trans := enTrans</span><br><span class="line">	<span class="comment">//前端传的字段 通过tag json获取</span></span><br><span class="line">	valid.RegisterTagNameFunc(<span class="function"><span class="keyword">func</span><span class="params">(fld reflect.StructField)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">		name := strings.SplitN(fld.Tag.Get(<span class="string">&quot;json&quot;</span>), <span class="string">&quot;,&quot;</span>, <span class="number">2</span>)[<span class="number">0</span>]</span><br><span class="line">		<span class="keyword">if</span> name == <span class="string">&quot;-&quot;</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> name</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> l == <span class="string">&quot;zh&quot;</span> &#123;</span><br><span class="line">		trans = zhTrans</span><br><span class="line">		<span class="comment">// 中文需要字段国际化 注册字段标签</span></span><br><span class="line">		valid.RegisterTagNameFunc(<span class="function"><span class="keyword">func</span><span class="params">(fld reflect.StructField)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">			name := fld.Tag.Get(<span class="string">&quot;label&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span> name</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	err := valid.Struct(dataStruct)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> errs, ok := err.(validator.ValidationErrors); ok &#123;</span><br><span class="line">			<span class="keyword">for</span> _, fe := <span class="keyword">range</span> errs &#123;</span><br><span class="line">				errStr := fe.Translate(trans)</span><br><span class="line">				<span class="comment">//可以根据平台的业务错误码进行封装业务错误</span></span><br><span class="line">				fmt.Println(errStr)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestValidateData</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">type</span> testStruct <span class="keyword">struct</span> &#123;</span><br><span class="line">		Name      <span class="keyword">string</span> <span class="string">`json:&quot;name&quot; validate:&quot;required&quot; label:&quot;函数名&quot;`</span></span><br><span class="line">		StartTime <span class="keyword">int</span>    <span class="string">`json:&quot;start_time&quot; validate:&quot;required,gt=0&quot; label:&quot;开始时间&quot;`</span></span><br><span class="line">		EndTime   <span class="keyword">int</span>    <span class="string">`json:&quot;end_time&quot;`</span></span><br><span class="line">		Interval  <span class="keyword">string</span> <span class="string">`json:&quot;interval&quot; validate:&quot;required&quot; label:&quot;时间间隔&quot;`</span></span><br><span class="line">	&#125;</span><br><span class="line">	d:=testStruct&#123;</span><br><span class="line">		Name: <span class="string">&quot;1&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	err := ValidateData(<span class="string">&quot;en&quot;</span>, d)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义字段验证</p>
+
       
     </div>
 
@@ -900,93 +971,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/14/go%E8%8E%B7%E5%8F%96ip%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/14/go%E8%8E%B7%E5%8F%96ip%E5%9C%B0%E7%90%86%E4%BF%A1%E6%81%AF/" class="post-title-link" itemprop="url">go获取ip地理信息</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-14 23:30:16" itemprop="dateCreated datePublished" datetime="2021-06-14T23:30:16+08:00">2021-06-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-15 00:20:06" itemprop="dateModified" datetime="2021-12-15T00:20:06+08:00">2021-12-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>MMDB即Maxmind DB，是一个设计用于存储IPv4和IPv6的数据信息的数据库，mmdb文件是一个二进制格式的文件，它使用一个<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?from=pc_blog_highlight&q=%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE">二分查找</a>树加速IP信息的查询。ps：网上有一些免费但是更新不及时的ip库，如果用于公司商业化，建议购买ip库。</p>
-<h2 id="GO解析mmdb文件"><a href="#GO解析mmdb文件" class="headerlink" title="GO解析mmdb文件"></a>GO解析mmdb文件</h2><p>GO基于IP获取地理信息有两个库：</p>
-<ul>
-<li>github.com/oschwald/maxminddb-golang 可以解析标准的mmdb文件</li>
-<li>github.com/oschwald/geoip2-golang 提供了更多的api操作， 底层也是调用了maxminddb-golang包来做数据的解析，仅仅做了一层接口上的封装，和对应地理数据格式（企业、城市、国家、AnonymousIP、Domain、ISP）的定义。 但是只适用于<a target="_blank" rel="noopener" href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2</a> and <a target="_blank" rel="noopener" href="http://www.maxmind.com/en/geolocation_landing">GeoIP2</a> databases，有database type限制。</li>
-</ul>
-<p>我们使用的是第三方的ip库，只能通过maxminddb-golang解析数据，根据业务场景封装自己的api，具体实现如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Enterprise <span class="keyword">struct</span> &#123;</span><br><span class="line">   City <span class="keyword">struct</span> &#123;</span><br><span class="line">      Names <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;city&quot;`</span></span><br><span class="line">   Continent <span class="keyword">struct</span> &#123;</span><br><span class="line">      Code  <span class="keyword">string</span>            <span class="string">`maxminddb:&quot;code&quot;`</span></span><br><span class="line">      Names <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;continent&quot;`</span></span><br><span class="line">   Country <span class="keyword">struct</span> &#123;</span><br><span class="line">      IsoCode <span class="keyword">string</span>            <span class="string">`maxminddb:&quot;iso_code&quot;`</span></span><br><span class="line">      Names   <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;country&quot;`</span></span><br><span class="line">   ISP <span class="keyword">struct</span> &#123;</span><br><span class="line">      Names <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;isp&quot;`</span></span><br><span class="line">   Location <span class="keyword">struct</span> &#123;</span><br><span class="line">      Latitude  <span class="keyword">float64</span> <span class="string">`maxminddb:&quot;latitude&quot;`</span></span><br><span class="line">      Longitude <span class="keyword">float64</span> <span class="string">`maxminddb:&quot;longitude&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;location&quot;`</span></span><br><span class="line">   Province <span class="keyword">struct</span> &#123;</span><br><span class="line">      IsoCode <span class="keyword">string</span>            <span class="string">`maxminddb:&quot;iso_code&quot;`</span></span><br><span class="line">      Names   <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;province&quot;`</span></span><br><span class="line">   Subdivisions []<span class="keyword">struct</span> &#123;</span><br><span class="line">      IsoCode <span class="keyword">string</span>            <span class="string">`maxminddb:&quot;iso_code&quot;`</span></span><br><span class="line">      Names   <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="string">`maxminddb:&quot;names&quot;`</span></span><br><span class="line">   &#125; <span class="string">`maxminddb:&quot;subdivisions&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//file = ipip.mmdb</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewGeoIp2</span><span class="params">(file <span class="keyword">string</span>)</span> <span class="params">(d *maxminddb.Reader, f <span class="keyword">func</span>()</span>, <span class="title">err</span> <span class="title">error</span>)</span> &#123;</span><br><span class="line">	 <span class="comment">//打开.mmdb文件</span></span><br><span class="line">   d, err = maxminddb.Open(file)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//程序结束关闭函数 闭包</span></span><br><span class="line">   f = <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> d != <span class="literal">nil</span> &#123;</span><br><span class="line">         _ = d.Close()</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> d, f, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> GeoIpRepo <span class="keyword">struct</span> &#123;</span><br><span class="line">   ipDb *maxminddb.Reader</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewGeoIpRepo</span><span class="params">(data *maxminddb.Reader)</span> *<span class="title">GeoIpRepo</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> &amp;GeoIpRepo&#123;</span><br><span class="line">      ipDb: data,</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> GeoIP <span class="keyword">struct</span> &#123;</span><br><span class="line">	Country  <span class="keyword">string</span></span><br><span class="line">	Province <span class="keyword">string</span></span><br><span class="line">	City     <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *GeoIpRepo)</span> <span class="title">GetIpLocation</span><span class="params">(ctx context.Context, ip <span class="keyword">string</span>)</span> <span class="params">(r GeoIP, err error)</span></span> &#123;</span><br><span class="line">  <span class="comment">//解析ip</span></span><br><span class="line">  ipV := net.ParseIP(ip)</span><br><span class="line">  <span class="comment">//如果不能确定mmdb结构 可以使用map去接收数据 然后再定义结构体</span></span><br><span class="line">  <span class="comment">//var record =make(map[string]interface&#123;&#125;)</span></span><br><span class="line">   <span class="keyword">var</span> record = Enterprise&#123;&#125;</span><br><span class="line">  <span class="comment">//二分查找数据</span></span><br><span class="line">   err = g.ipDb.Lookup(ipV, &amp;record)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      log.Warnf(<span class="string">&quot;ip %s get location failed,%v&quot;</span>, ip, err)</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">   &#125;</span><br><span class="line">  <span class="comment">//转换</span></span><br><span class="line">   <span class="keyword">if</span> c, ok := record.Country.Names[<span class="string">&quot;zh-CN&quot;</span>]; ok &#123;</span><br><span class="line">      r.Country = c</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> c, ok := record.City.Names[<span class="string">&quot;zh-CN&quot;</span>]; ok &#123;</span><br><span class="line">      r.City = c</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> c, ok := record.Province.Names[<span class="string">&quot;zh-CN&quot;</span>]; ok &#123;</span><br><span class="line">      r.Province = c</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
       
     </div>
 
