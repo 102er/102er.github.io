@@ -401,10 +401,19 @@
 
 <h2 id="函数特点"><a href="#函数特点" class="headerlink" title="函数特点"></a>函数特点</h2><ul>
 <li>程序运行前，进行包的初始化工作</li>
-<li>每个包，每个go文件可以拥有多个init函数</li>
+<li>每个包，每个go文件可以拥有多个init函数，<u>顺序不能保证从上到下执行</u></li>
 <li>没有参数，不能被其他函数调用，是在main函数执行前自动被调用</li>
+<li>只会执行一次，即使这个包被多个包import</li>
 </ul>
-<h2 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h2>]]></content>
+<h2 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h2><p>import –&gt; const –&gt; var –&gt; init()</p>
+<p><img src="https://102er.github.io/images/init.png" alt="osi"></p>
+<ol>
+<li>如果一个包导入了其他包，则首先初始化导入的包。</li>
+<li>然后初始化当前包的常量。</li>
+<li>接下来初始化当前包的变量。</li>
+<li>最后，调用当前包的 <code>init()</code> 函数。</li>
+</ol>
+]]></content>
       <categories>
         <category>GO</category>
       </categories>
@@ -495,6 +504,8 @@
 <li>github.com/olivere/elastic 第三方包，封装了更多的高级api</li>
 </ul>
 <p>两个库都可以使用，出于我们操作场景不复杂，用来查询数据，我们使用官方库封装了一个api，:(官方库说是性能比较好</p>
+<span id="more"></span>
+
 <h3 id="初始化客户端"><a href="#初始化客户端" class="headerlink" title="初始化客户端"></a>初始化客户端</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bytes&quot;</span></span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	es <span class="string">&quot;github.com/elastic/go-elasticsearch/v7&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/tidwall/gjson&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">// Elastic 基于官方库封装</span></span><br><span class="line"><span class="keyword">type</span> Elastic <span class="keyword">struct</span> &#123;</span><br><span class="line">   es  *es.Client</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// M+A构建复杂的查询条件</span></span><br><span class="line"><span class="keyword">type</span> M = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"><span class="keyword">type</span> A = []<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewElasticClient</span><span class="params">(conf *conf.Data, logger log.Logger)</span> <span class="params">(*Elastic, error)</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> err error</span><br><span class="line">   client, err := es.NewClient(es.Config&#123;</span><br><span class="line">      Addresses: conf.Es.Clusters, <span class="comment">//es集群 支持多个host</span></span><br><span class="line">      Username:  conf.Es.User, <span class="comment">//用户名</span></span><br><span class="line">      Password:  conf.Es.Password, <span class="comment">//密码</span></span><br><span class="line">   &#125;)</span><br><span class="line">   ctx, cancel := context.WithTimeout(context.Background(), <span class="number">30</span>*time.Second)</span><br><span class="line">   <span class="keyword">defer</span> cancel()</span><br><span class="line">  <span class="comment">//es信息</span></span><br><span class="line">   res, err := client.Info(client.Info.WithContext(ctx))</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">defer</span> res.Body.Close()</span><br><span class="line">   <span class="keyword">if</span> res.IsError() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   b, err := ioutil.ReadAll(res.Body)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   	fmt.Println(<span class="string">&quot;es version: &quot;</span>, gjson.ParseBytes(b).Get(<span class="string">&quot;version.number&quot;</span>).String())</span><br><span class="line">   <span class="keyword">return</span> &amp;Elastic&#123;</span><br><span class="line">      es:  client,</span><br><span class="line">      log: l,</span><br><span class="line">   &#125;, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="封装API"><a href="#封装API" class="headerlink" title="封装API"></a>封装API</h3><p>查询函数</p>
