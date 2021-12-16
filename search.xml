@@ -406,7 +406,7 @@
 <li>只会执行一次，即使这个包被多个包import</li>
 </ul>
 <h2 id="调用顺序"><a href="#调用顺序" class="headerlink" title="调用顺序"></a>调用顺序</h2><p>import –&gt; const –&gt; var –&gt; init()</p>
-<p><img src="https://102er.github.io/images/init.png" alt="osi"></p>
+<p><img src="https://102er.github.io/uploads/init.png" alt="osi"></p>
 <ol>
 <li>如果一个包导入了其他包，则首先初始化导入的包。</li>
 <li>然后初始化当前包的常量。</li>
