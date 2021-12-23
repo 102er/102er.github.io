@@ -101,11 +101,6 @@
       </tags>
   </entry>
   <entry>
-    <title>rabbitMQ介绍</title>
-    <url>/2020/06/19/rabbitMQ%E4%BB%8B%E7%BB%8D/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>redis数据类型</title>
     <url>/2020/08/19/redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</url>
     <content><![CDATA[<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Redis支持五种数据类型：string（字符串），hash（哈希），list（列表），set（集合）及zset(sorted set：有序集合)。</p>
@@ -308,7 +303,7 @@
   <entry>
     <title>go调度模型-GMP</title>
     <url>/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/</url>
-    <content><![CDATA[<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
+    <content><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
 <span id="more"></span>
 
 <h4 id="并发-amp-并行"><a href="#并发-amp-并行" class="headerlink" title="并发&amp;并行"></a><strong>并发</strong>&amp;并行</h4><p><strong>并发：</strong>某一段时间，几个程序在同一个cpu上运行，但任意一个时间点只有一个程序在运行。解决程序排队等待的问题，如果一个程序发生阻塞，那么其他程序仍可以正常的执行。站在cpu的角度上，并发实际也是串行的。</p>
@@ -519,6 +514,20 @@
       </categories>
       <tags>
         <tag>go开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>go依赖注入</title>
+    <url>/2021/12/23/go%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>消息队列介绍</title>
+    <url>/2020/06/19/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%BB%8B%E7%BB%8D/</url>
+    <content><![CDATA[<p>​        消息队列是一种异步的服务间通信方式，适用于无服务器和微服务架构。消息在被处理和删除之前一直存储在队列上。每条消息仅可被一位用户处理一次。消息队列可被用于分离重量级处理、缓冲或批处理工作以及缓解高峰期工作负载。常见的消息队列：rabbitMQ，pulsar，kafka，redis，ActiveMQ…</p>
+<h3 id="rabbitMQ"><a href="#rabbitMQ" class="headerlink" title="rabbitMQ"></a>rabbitMQ</h3><h2 id="pulsar"><a href="#pulsar" class="headerlink" title="pulsar"></a>pulsar</h2><h2 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h2>]]></content>
+      <tags>
+        <tag>消息队列</tag>
       </tags>
   </entry>
 </search>

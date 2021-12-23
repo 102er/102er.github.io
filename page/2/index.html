@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -170,7 +170,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -199,6 +199,90 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/09/go%E4%B9%8Bxx%E9%97%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/09/go%E4%B9%8Bxx%E9%97%AE/" class="post-title-link" itemprop="url">go之xx问</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-09 14:29:55" itemprop="dateCreated datePublished" datetime="2021-08-09T14:29:55+08:00">2021-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-10 15:36:47" itemprop="dateModified" datetime="2021-12-10T15:36:47+08:00">2021-12-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="T和-T的调用关系"><a href="#T和-T的调用关系" class="headerlink" title="T和*T的调用关系"></a><code>T</code>和<code>*T</code>的调用关系</h4><p>在Go语言中，为了方便，对于一个非指针和非接口定义类型<code>T</code>，</p>
+<ul>
+<li>一个<code>T</code>类型的值可以调用为<code>*T</code>类型声明的方法，但是仅当此<code>T</code>的值是可寻址的情况下。 编译器在调用指针属主方法前，会自动取此<code>T</code>值的地址。 因为不是任何<code>T</code>值都是可寻址的，所以并非任何<code>T</code>值都能够调用为类型<code>*T</code>声明的方法。 这种便利只是一个语法糖，而不是一种固有的规则。（常量不可寻址）</li>
+<li>一个<code>*T</code>类型的值可以调用为类型<code>T</code>声明的方法。 这是因为解引用指针总是合法的。 这种便利不仅仅是一个语法糖，它也是一种固有的规则。</li>
+</ul>
+<p>所以很合理的， <code>*T</code>的方法集总是<code>T</code>方法集的超集，但反之不然。</p>
+<p>事实上，你可以认为对于每一个为类型<code>T</code>声明的方法，编译器都会为类型<code>*T</code>自动隐式声明一个同名和同签名的方法。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/08/09/go%E4%B9%8Bxx%E9%97%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -668,7 +752,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-10 15:36:34" itemprop="dateModified" datetime="2021-12-10T15:36:34+08:00">2021-12-10</time>
+      <time title="修改时间：2021-12-23 23:10:30" itemprop="dateModified" datetime="2021-12-23T23:10:30+08:00">2021-12-23</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -690,7 +774,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
+          <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>调度的进化 ：从进程到线程再到协程，其实就是不断共享，不断减少切换成本。go协程，在语言层面封装了协程调度，使用起来更方便。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2020/11/19/go%E8%B0%83%E5%BA%A6%E6%A8%A1%E5%9E%8B-GMP/#more" rel="contents">
@@ -802,7 +886,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/19/rabbitMQ%E4%BB%8B%E7%BB%8D/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/06/19/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpeg">
@@ -815,7 +899,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/06/19/rabbitMQ%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">rabbitMQ介绍</a>
+          <a href="/2020/06/19/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">消息队列介绍</a>
         </h2>
 
         <div class="post-meta-container">
@@ -833,7 +917,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-10 15:34:14" itemprop="dateModified" datetime="2021-12-10T15:34:14+08:00">2021-12-10</time>
+      <time title="修改时间：2021-12-23 23:10:07" itemprop="dateModified" datetime="2021-12-23T23:10:07+08:00">2021-12-23</time>
     </span>
 
   
@@ -846,7 +930,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p>​        消息队列是一种异步的服务间通信方式，适用于无服务器和微服务架构。消息在被处理和删除之前一直存储在队列上。每条消息仅可被一位用户处理一次。消息队列可被用于分离重量级处理、缓冲或批处理工作以及缓解高峰期工作负载。常见的消息队列：rabbitMQ，pulsar，kafka，redis，ActiveMQ…</p>
+<h3 id="rabbitMQ"><a href="#rabbitMQ" class="headerlink" title="rabbitMQ"></a>rabbitMQ</h3><h2 id="pulsar"><a href="#pulsar" class="headerlink" title="pulsar"></a>pulsar</h2><h2 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h2>
       
     </div>
 
@@ -903,7 +988,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-10 15:35:33" itemprop="dateModified" datetime="2021-12-10T15:35:33+08:00">2021-12-10</time>
+      <time title="修改时间：2021-12-16 18:09:10" itemprop="dateModified" datetime="2021-12-16T18:09:10+08:00">2021-12-16</time>
     </span>
 
   
@@ -917,93 +1002,6 @@
     
     <div class="post-body" itemprop="articleBody">
           
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/04/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2020/04/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/" class="post-title-link" itemprop="url">go初始化函数-init</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-04-10 15:21:12" itemprop="dateCreated datePublished" datetime="2020-04-10T15:21:12+08:00">2020-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-16 13:41:04" itemprop="dateModified" datetime="2021-12-16T13:41:04+08:00">2021-12-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="init-函数是什么？"><a href="#init-函数是什么？" class="headerlink" title="init()函数是什么？"></a>init()函数是什么？</h2><p> <code>init()</code> 函数是隐式调用的，即会在包引入就执行，在编译的时候，已经确保 <code>init</code> 会在 <code>main</code>执行之前就被调用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/04/10/go%E5%88%9D%E5%A7%8B%E5%8C%96%E5%87%BD%E6%95%B0-init/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
