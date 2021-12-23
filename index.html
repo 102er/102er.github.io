@@ -231,8 +231,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2021-12-23 23:01:58" itemprop="dateCreated datePublished" datetime="2021-12-23T23:01:58+08:00">2021-12-23</time>
+      <time title="创建时间：2021-12-23 23:01:58 / 修改时间：23:28:09" itemprop="dateCreated datePublished" datetime="2021-12-23T23:01:58+08:00">2021-12-23</time>
     </span>
 
   
@@ -245,7 +246,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p>Go的依赖注入框架有两类，一类是通过反射在运行时进行依赖注入，典型代表是 uber 开源的 dig，另外一类是通过 generate 进行代码生成，典型代表是 Google 开源的 wire。使用 dig 功能会强大一些，但是缺点就是错误只能在运行时才能发现，这样如果不小心的话可能会导致一些隐藏的 bug 出现。使用 wire 的缺点就是功能限制多一些，但是好处就是编译的时候就可以发现问题，并且生成的代码其实和我们自己手写相关代码差不太多。实际项目中我们使用wire实现依赖注入。</p>
+<h3 id="wire"><a href="#wire" class="headerlink" title="wire"></a>wire</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get github.com/google/wire/cmd/wire</span><br></pre></td></tr></table></figure>
+
       
     </div>
 
