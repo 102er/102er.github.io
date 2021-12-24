@@ -103,11 +103,15 @@
   <entry>
     <title>二叉树遍历</title>
     <url>/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/</url>
-    <content><![CDATA[<p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>两个子树</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
+    <content><![CDATA[<p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
 <p><img src="https://102er.github.io/uploads/2chashu.png" alt="osi"></p>
-<p>二叉树的遍历包括前序，中序，后序和层序遍历</p>
+<ul>
+<li><strong>满二叉树</strong>：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。</li>
+<li><strong>完全二叉树：</strong>对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节点在二叉树中的位置完全相同，则这棵二叉树称为完全二叉树。</li>
+</ul>
 <span id="more"></span>
 
+<p>二叉树的遍历包括前序，中序，后序和层序几种不同的遍历方式。</p>
 <h3 id="前序遍历"><a href="#前序遍历" class="headerlink" title="前序遍历"></a>前序遍历</h3><p>首先遍历根节点，其次遍历左孩子，再遍历右孩子，按照如此的顺序遍历整棵树，遍历结果如下：</p>
 <table>
 <thead>
@@ -125,6 +129,8 @@
 </thead>
 </table>
 <p>代码实现：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> TreeNode <span class="keyword">struct</span> &#123;</span><br><span class="line">   Val   <span class="keyword">int</span></span><br><span class="line">   Left  *TreeNode</span><br><span class="line">   Right *TreeNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//前序遍历</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorderTraversal</span><span class="params">(root *TreeNode)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> preorder <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">   <span class="keyword">var</span> result []<span class="keyword">int</span></span><br><span class="line">   preorder = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">      result = <span class="built_in">append</span>(result, node.Val)</span><br><span class="line">      preorder(node.Left) <span class="comment">//遍历左树</span></span><br><span class="line">      preorder(node.Right) <span class="comment">//遍历右树</span></span><br><span class="line">   &#125;</span><br><span class="line">   preorder(root)</span><br><span class="line">   <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h3><p>首先遍历左子树，其次遍历父节点，最后遍历右子树，按照如此的顺序遍历整棵树</p>
 <h3 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h3><p>首先遍历左子树，其次遍历右子树，最后遍历父节点</p>
 <h3 id="层序遍历"><a href="#层序遍历" class="headerlink" title="层序遍历"></a>层序遍历</h3><p>需要使用链表存储每一层的节点，同时，遍历完一个节点，将其左右子节点增加近链表中</p>

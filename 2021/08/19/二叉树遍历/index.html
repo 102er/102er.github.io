@@ -20,16 +20,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有两个子树的树结构，通常子树被称作“左子树”和“右子树”。如下图：  二叉树的遍历包括前序，中序，后序和层序遍历">
+<meta name="description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节">
 <meta property="og:type" content="article">
 <meta property="og:title" content="二叉树遍历">
 <meta property="og:url" content="http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有两个子树的树结构，通常子树被称作“左子树”和“右子树”。如下图：  二叉树的遍历包括前序，中序，后序和层序遍历">
+<meta property="og:description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://102er.github.io/uploads/2chashu.png">
 <meta property="article:published_time" content="2021-08-19T12:28:12.000Z">
-<meta property="article:modified_time" content="2021-12-24T11:11:51.264Z">
+<meta property="article:modified_time" content="2021-12-24T15:00:22.588Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="go,golang">
 <meta name="twitter:card" content="summary">
@@ -245,7 +245,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-24 19:11:51" itemprop="dateModified" datetime="2021-12-24T19:11:51+08:00">2021-12-24</time>
+      <time title="修改时间：2021-12-24 23:00:22" itemprop="dateModified" datetime="2021-12-24T23:00:22+08:00">2021-12-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,11 +267,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>两个子树</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
+        <p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
 <p><img src="https://102er.github.io/uploads/2chashu.png" alt="osi"></p>
-<p>二叉树的遍历包括前序，中序，后序和层序遍历</p>
+<ul>
+<li><strong>满二叉树</strong>：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。</li>
+<li><strong>完全二叉树：</strong>对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节点在二叉树中的位置完全相同，则这棵二叉树称为完全二叉树。</li>
+</ul>
 <span id="more"></span>
 
+<p>二叉树的遍历包括前序，中序，后序和层序几种不同的遍历方式。</p>
 <h3 id="前序遍历"><a href="#前序遍历" class="headerlink" title="前序遍历"></a>前序遍历</h3><p>首先遍历根节点，其次遍历左孩子，再遍历右孩子，按照如此的顺序遍历整棵树，遍历结果如下：</p>
 <table>
 <thead>
@@ -289,6 +293,8 @@
 </thead>
 </table>
 <p>代码实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TreeNode <span class="keyword">struct</span> &#123;</span><br><span class="line">   Val   <span class="keyword">int</span></span><br><span class="line">   Left  *TreeNode</span><br><span class="line">   Right *TreeNode</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//前序遍历</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">preorderTraversal</span><span class="params">(root *TreeNode)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> preorder <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span></span><br><span class="line">   <span class="keyword">var</span> result []<span class="keyword">int</span></span><br><span class="line">   preorder = <span class="function"><span class="keyword">func</span><span class="params">(node *TreeNode)</span></span> &#123;</span><br><span class="line">      <span class="keyword">if</span> node == <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">      result = <span class="built_in">append</span>(result, node.Val)</span><br><span class="line">      preorder(node.Left) <span class="comment">//遍历左树</span></span><br><span class="line">      preorder(node.Right) <span class="comment">//遍历右树</span></span><br><span class="line">   &#125;</span><br><span class="line">   preorder(root)</span><br><span class="line">   <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h3><p>首先遍历左子树，其次遍历父节点，最后遍历右子树，按照如此的顺序遍历整棵树</p>
 <h3 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h3><p>首先遍历左子树，其次遍历右子树，最后遍历父节点</p>
 <h3 id="层序遍历"><a href="#层序遍历" class="headerlink" title="层序遍历"></a>层序遍历</h3><p>需要使用链表存储每一层的节点，同时，遍历完一个节点，将其左右子节点增加近链表中</p>
