@@ -103,7 +103,7 @@
   <entry>
     <title>二叉树遍历</title>
     <url>/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/</url>
-    <content><![CDATA[<p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
+    <content><![CDATA[<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
 <p><img src="https://102er.github.io/uploads/2chashu.png" alt="osi"></p>
 <ul>
 <li><strong>满二叉树</strong>：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。</li>
@@ -119,8 +119,8 @@
 <th>6</th>
 <th>9</th>
 <th>23</th>
-<th>10</th>
 <th>5</th>
+<th>10</th>
 <th>7</th>
 <th>8</th>
 <th>22</th>

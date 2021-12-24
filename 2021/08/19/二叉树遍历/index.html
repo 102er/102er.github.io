@@ -20,16 +20,16 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节">
+<meta name="description" content="概述二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii">
 <meta property="og:type" content="article">
 <meta property="og:title" content="二叉树遍历">
 <meta property="og:url" content="http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii的节">
+<meta property="og:description" content="概述二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://102er.github.io/uploads/2chashu.png">
 <meta property="article:published_time" content="2021-08-19T12:28:12.000Z">
-<meta property="article:modified_time" content="2021-12-24T15:00:22.588Z">
+<meta property="article:modified_time" content="2021-12-24T15:04:27.268Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="go,golang">
 <meta name="twitter:card" content="summary">
@@ -149,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">1.</span> <span class="nav-text">前序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">2.</span> <span class="nav-text">中序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">3.</span> <span class="nav-text">后序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">4.</span> <span class="nav-text">层序遍历</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">2.</span> <span class="nav-text">前序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">3.</span> <span class="nav-text">中序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">4.</span> <span class="nav-text">后序遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%82%E5%BA%8F%E9%81%8D%E5%8E%86"><span class="nav-number">5.</span> <span class="nav-text">层序遍历</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -245,7 +245,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-24 23:00:22" itemprop="dateModified" datetime="2021-12-24T23:00:22+08:00">2021-12-24</time>
+      <time title="修改时间：2021-12-24 23:04:27" itemprop="dateModified" datetime="2021-12-24T23:04:27+08:00">2021-12-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,7 +267,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>**两个子树**</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
 <p><img src="https://102er.github.io/uploads/2chashu.png" alt="osi"></p>
 <ul>
 <li><strong>满二叉树</strong>：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。</li>
@@ -283,8 +283,8 @@
 <th>6</th>
 <th>9</th>
 <th>23</th>
-<th>10</th>
 <th>5</th>
+<th>10</th>
 <th>7</th>
 <th>8</th>
 <th>22</th>
