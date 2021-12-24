@@ -45,6 +45,9 @@
     <title>prometheus</title>
     <url>/2021/03/23/prometheus/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>监控</category>
+      </categories>
   </entry>
   <entry>
     <title>protoc使用</title>
@@ -121,7 +124,7 @@
 
 <h2 id="类别"><a href="#类别" class="headerlink" title="类别"></a>类别</h2>]]></content>
       <categories>
-        <category>数据库</category>
+        <category>存储</category>
       </categories>
       <tags>
         <tag>mysql</tag>
@@ -134,6 +137,9 @@
 <span id="more"></span>
 
 ]]></content>
+      <categories>
+        <category>存储</category>
+      </categories>
       <tags>
         <tag>redis</tag>
       </tags>
@@ -323,6 +329,9 @@
 <h4 id="函数返回局部变量的指针是否安全？"><a href="#函数返回局部变量的指针是否安全？" class="headerlink" title="函数返回局部变量的指针是否安全？"></a>函数返回局部变量的指针是否安全？</h4><p>是的，在Go中这是绝对安全的。</p>
 <p>支持栈的Go编译器将会对每个局部变量进行逃逸分析。 对于官方标准编译器来说，如果一个值可以在编译时刻被断定它在运行时刻仅会在一个协程中被使用，则此值将被开辟在（此协程的）栈上；否则此值将被开辟在堆上。</p>
 ]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
       <tags>
         <tag>GO</tag>
       </tags>
@@ -363,8 +372,8 @@
         <category>GO</category>
       </categories>
       <tags>
+        <tag>GO</tag>
         <tag>并发编程</tag>
-        <tag>GO开发</tag>
       </tags>
   </entry>
   <entry>
@@ -440,13 +449,19 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>go开发</tag>
+        <tag>GO</tag>
       </tags>
   </entry>
   <entry>
     <title>服务部署nginx+keepalived</title>
     <url>/2020/05/19/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nginx+keepalived/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>服务部署</category>
+      </categories>
+      <tags>
+        <tag>负载均衡</tag>
+      </tags>
   </entry>
   <entry>
     <title>go获取ip地理信息</title>
@@ -464,7 +479,7 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>GO开发</tag>
+        <tag>GO</tag>
       </tags>
   </entry>
   <entry>
@@ -498,7 +513,7 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>go开发</tag>
+        <tag>GO</tag>
       </tags>
   </entry>
   <entry>
@@ -509,13 +524,19 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>go开发</tag>
+        <tag>GO</tag>
       </tags>
   </entry>
   <entry>
     <title>go协程池实现</title>
     <url>/2021/12/15/go%E5%8D%8F%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>GO</category>
+      </categories>
+      <tags>
+        <tag>GO</tag>
+      </tags>
   </entry>
   <entry>
     <title>go查询Elastic</title>
@@ -540,7 +561,7 @@
         <category>GO</category>
       </categories>
       <tags>
-        <tag>go开发</tag>
+        <tag>GO</tag>
       </tags>
   </entry>
   <entry>
@@ -551,12 +572,18 @@
 
 <h3 id="wire"><a href="#wire" class="headerlink" title="wire"></a>wire</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">go</span> get github.com/google/wire/cmd/wire</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <tags>
+        <tag>GO</tag>
+      </tags>
   </entry>
   <entry>
     <title>消息队列介绍</title>
     <url>/2020/06/19/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E4%BB%8B%E7%BB%8D/</url>
     <content><![CDATA[<p>​        消息队列是一种异步的服务间通信方式，适用于无服务器和微服务架构。消息在被处理和删除之前一直存储在队列上。每条消息仅可被一位用户处理一次。消息队列可被用于分离重量级处理、缓冲或批处理工作以及缓解高峰期工作负载。常见的消息队列：rabbitMQ，pulsar，kafka，redis，ActiveMQ…</p>
 <h3 id="rabbitMQ"><a href="#rabbitMQ" class="headerlink" title="rabbitMQ"></a>rabbitMQ</h3><h2 id="pulsar"><a href="#pulsar" class="headerlink" title="pulsar"></a>pulsar</h2><h2 id="kafka"><a href="#kafka" class="headerlink" title="kafka"></a>kafka</h2>]]></content>
+      <categories>
+        <category>消息队列</category>
+      </categories>
       <tags>
         <tag>消息队列</tag>
       </tags>
