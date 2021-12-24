@@ -104,6 +104,7 @@
     <title>二叉树遍历</title>
     <url>/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/</url>
     <content><![CDATA[<p>二叉树是一种「数据结构」，二叉树是每个节点最多有<code>两个子树</code>的树结构，通常子树被称作“左子树”和“右子树”。如下图：</p>
+<p><img src="https://102er.github.io/uploads/2chashu.png" alt="osi"></p>
 <p>二叉树的遍历包括前序，中序，后序和层序遍历</p>
 <span id="more"></span>
 
