@@ -320,7 +320,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-24 18:53:05" itemprop="dateModified" datetime="2021-12-24T18:53:05+08:00">2021-12-24</time>
+      <time title="修改时间：2021-12-25 22:58:06" itemprop="dateModified" datetime="2021-12-25T22:58:06+08:00">2021-12-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -342,7 +342,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p>虽然go语言在调度Goroutine已经优化的非常完成，并且Goroutine作为轻量级执行流程，也不需要CPU调度器的切换，我们一般在使用的时候，如果想处理一个分支流程，直接go一下即可。</p>
+<p>但是，如果无休止的开辟Goroutine依然会出现高频率的调度Groutine，那么依然会浪费很多上下文切换的资源，导致做无用功。所以设计一个Goroutine池限制Goroutine的开辟个数在大型并发场景还是必要的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/15/go%E5%8D%8F%E7%A8%8B%E6%B1%A0%E5%AE%9E%E7%8E%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
