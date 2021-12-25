@@ -28,7 +28,7 @@
 <meta property="og:description" content="Go的依赖注入框架有两类，一类是通过反射在运行时进行依赖注入，典型代表是 uber 开源的 dig，另外一类是通过 generate 进行代码生成，典型代表是 Google 开源的 wire。使用 dig 功能会强大一些，但是缺点就是错误只能在运行时才能发现，这样如果不小心的话可能会导致一些隐藏的 bug 出现。使用 wire 的缺点就是功能限制多一些，但是好处就是编译的时候就可以发现问题，并且生">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-23T15:01:58.000Z">
-<meta property="article:modified_time" content="2021-12-24T10:52:48.981Z">
+<meta property="article:modified_time" content="2021-12-25T14:43:04.622Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="GO">
 <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#wire"><span class="nav-number">1.</span> <span class="nav-text">wire</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#wire"><span class="nav-number">1.</span> <span class="nav-text">wire</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#provider%E6%9E%84%E9%80%A0%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">provider构造器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#injector%E6%B3%A8%E5%85%A5%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">injector注入器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">高级特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8%E9%BB%98%E8%AE%A4%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.0.1.</span> <span class="nav-text">不要使用默认类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Option-Struct"><span class="nav-number">2.0.2.</span> <span class="nav-text">Option Struct</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF"><span class="nav-number">2.0.3.</span> <span class="nav-text">返回错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%85%E7%90%86%E5%87%BD%E6%95%B0"><span class="nav-number">2.0.4.</span> <span class="nav-text">清理函数</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -243,7 +243,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-24 18:52:48" itemprop="dateModified" datetime="2021-12-24T18:52:48+08:00">2021-12-24</time>
+      <time title="修改时间：2021-12-25 22:43:04" itemprop="dateModified" datetime="2021-12-25T22:43:04+08:00">2021-12-25</time>
     </span>
 
   
@@ -259,7 +259,34 @@
         <p>Go的依赖注入框架有两类，一类是通过反射在运行时进行依赖注入，典型代表是 uber 开源的 dig，另外一类是通过 generate 进行代码生成，典型代表是 Google 开源的 wire。使用 dig 功能会强大一些，但是缺点就是错误只能在运行时才能发现，这样如果不小心的话可能会导致一些隐藏的 bug 出现。使用 wire 的缺点就是功能限制多一些，但是好处就是编译的时候就可以发现问题，并且生成的代码其实和我们自己手写相关代码差不太多。实际项目中我们使用wire实现依赖注入。</p>
 <span id="more"></span>
 
-<h3 id="wire"><a href="#wire" class="headerlink" title="wire"></a>wire</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get github.com/google/wire/cmd/wire</span><br></pre></td></tr></table></figure>
+<h2 id="wire"><a href="#wire" class="headerlink" title="wire"></a>wire</h2><p>wire有两个基础概念，构造器provider和injector注入器：</p>
+<ul>
+<li>Provider：是一个普通的函数，这个函数会返回构建依赖关系所需的组件。相当于实例化一个对象。</li>
+<li>injector：也是一个普通函数，我们常常在 <code>wire.go</code> 文件中定义 injector 函数签名，然后通过 <code>wire</code> 命令自动生成一个完整的函数。</li>
+</ul>
+<h3 id="provider构造器"><a href="#provider构造器" class="headerlink" title="provider构造器"></a>provider构造器</h3><p>provider函数，一般跟着结构体对象定义，<strong>在 wire 中不能存在两个 provider 返回相同的组件类型</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> UserService <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserService</span><span class="params">()</span> *<span class="title">UserService</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> &amp;UserService&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在wire_set.go设置provider set：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;github.com/102er/apiserver/internal/service&quot;</span></span><br><span class="line">   <span class="string">&quot;github.com/google/wire&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ProviderSet = wire.NewSet(service.NewUserService)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以使用<strong>ProviderSet</strong>，它主要把provider打包成一个集合，我们传给injector只需要传这个集合即可，这样方便我们维护provide。当然，也可以直接把NewUserService()这个函数传给injector的build函数</p>
+<h3 id="injector注入器"><a href="#injector注入器" class="headerlink" title="injector注入器"></a>injector注入器</h3><p>injector函数一般定义在wire.go文件中，通过wire命令自动生成一个完整的函数，wire.go代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//go:build wireinject</span></span><br><span class="line"><span class="comment">// +build wireinject</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// The build tag makes sure the stub is not built in the final build.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;github.com/102er/apiserver/internal&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/102er/apiserver/internal/server&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/google/wire&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">//初始化，且会返回一个gin的engine </span></span><br><span class="line"><span class="comment">//main函数可以调用initApi 拿到 gin.engine 启动服</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">initApi</span><span class="params">()</span> <span class="params">(*gin.Engine, error)</span></span> &#123;</span><br><span class="line">	<span class="built_in">panic</span>(wire.Build(internal.ProviderSet, server.NewGinHttpServer))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>//+build wireinject<code>与</code>package main`这两行之间的空行必须要有。</li>
+<li><code>+build</code>其实是 Go 语言的一个特性。类似 C/C++ 的条件编译，在执行<code>go build</code>时可传入一些选项，根据这个选项决定某些文件是否编译。<code>//+build wireinject</code> 注释确保了这个文件在我们正常编译的时候不会被引用。</li>
+<li><code>wire</code>工具只会处理有<code>wireinject</code>的文件，所以我们的<code>wire.go</code>文件要加上这个。</li>
+</ul>
+<p>上面的代码通过 wire 工具生成：wire_gen.go代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Code generated by Wire. DO NOT EDIT.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//go:generate go run github.com/google/wire/cmd/wire</span></span><br><span class="line"><span class="comment">//go:build !wireinject</span></span><br><span class="line"><span class="comment">// +build !wireinject</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;github.com/102er/apiserver/internal/server&quot;</span></span><br><span class="line">   <span class="string">&quot;github.com/102er/apiserver/internal/service&quot;</span></span><br><span class="line">   <span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Injectors from wire.go:</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">initApi</span><span class="params">()</span> <span class="params">(*gin.Engine, error)</span></span> &#123;</span><br><span class="line">   userService := service.NewUserService()</span><br><span class="line">   engine := server.NewGinHttpServer(userService)</span><br><span class="line">   <span class="keyword">return</span> engine, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整代码示例参数：<a target="_blank" rel="noopener" href="https://github.com/102er/apiserver">102er-apiserver</a></p>
+<h2 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h2><h4 id="不要使用默认类型"><a href="#不要使用默认类型" class="headerlink" title="不要使用默认类型"></a>不要使用默认类型</h4><p>wire 不支持两个提供<strong>两个相同类型</strong>的 provider，所以如果我们使用默认类型如 <code>int</code> <code>string</code> 等，只要有两个依赖就会导致报错，解决方案是使用类型别名。</p>
+<h4 id="Option-Struct"><a href="#Option-Struct" class="headerlink" title="Option Struct"></a>Option Struct</h4><p>某个provide函数可能会有很多参数，这时候可以定义option struct，使用 <code>wire.Strcut</code> 来构建 Option Strcut 的依赖</p>
+<h4 id="返回错误"><a href="#返回错误" class="headerlink" title="返回错误"></a>返回错误</h4><p>在 go 中如果遇到错误，我们会在最后一个返回值返回 error，wire 同样也支持返回错误的情况，只需要在 injector 的函数签名中加上 error 返回值即可</p>
+<h4 id="清理函数"><a href="#清理函数" class="headerlink" title="清理函数"></a>清理函数</h4><p>通常打开文件或者是链接这种需要关闭的资源，这时候 provider 可以返回一个闭包函数 <code>func()</code> ，wire 在进行构建的时候，会在报错的时候调用，并且会将所有的<strong>闭包</strong>函数聚合返回。</p>
 
     </div>
 
