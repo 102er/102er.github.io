@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -199,92 +199,6 @@
 
 
     <div class="main-inner index posts-expand">
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/15/go%E5%AE%9E%E7%8E%B0%E5%9B%BD%E9%99%85%E5%8C%96/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/09/15/go%E5%AE%9E%E7%8E%B0%E5%9B%BD%E9%99%85%E5%8C%96/" class="post-title-link" itemprop="url">go国际化实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-09-15 21:08:02" itemprop="dateCreated datePublished" datetime="2021-09-15T21:08:02+08:00">2021-09-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-26 20:01:46" itemprop="dateModified" datetime="2021-12-26T20:01:46+08:00">2021-12-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>用go-i18n实现国际化</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> languageKey <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	</span><br><span class="line"><span class="comment">//设置上下文参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewI18nContext</span><span class="params">(ctx context.Context, locale <span class="keyword">string</span>)</span> <span class="title">context</span>.<span class="title">Context</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> lang = <span class="string">&quot;en&quot;</span></span><br><span class="line">	<span class="keyword">switch</span> locale &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">&quot;zh&quot;</span>, <span class="string">&quot;zh-CN&quot;</span>:</span><br><span class="line">		lang = <span class="string">&quot;zh&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> context.WithValue(ctx, languageKey&#123;&#125;, lang)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FromI18nContext</span><span class="params">(ctx context.Context)</span> <span class="params">(<span class="keyword">string</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	lang, ok := ctx.Value(languageKey&#123;&#125;).(<span class="keyword">string</span>)</span><br><span class="line">	<span class="keyword">return</span> lang, ok</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> LocalizeOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">   MsgParams <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125; <span class="comment">//自定义替换字段参数</span></span><br><span class="line">   RawMsg    <span class="keyword">string</span>                 <span class="comment">//某找到翻译时 返回的信息 兼容php版本</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> LocalizeOptionsFunc <span class="function"><span class="keyword">func</span><span class="params">(option *LocalizeOptions)</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Localize</span><span class="params">(ctx context.Context, ID <span class="keyword">string</span>, opts ...LocalizeOptionsFunc)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">   option := &amp;LocalizeOptions&#123;</span><br><span class="line">      MsgParams: <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;),</span><br><span class="line">      RawMsg:    <span class="string">&quot;&quot;</span>,</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">//设置参数</span></span><br><span class="line">   <span class="keyword">for</span> _, f := <span class="keyword">range</span> opts &#123;</span><br><span class="line">      f(option)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">var</span> lang <span class="keyword">string</span></span><br><span class="line">   <span class="keyword">var</span> ok <span class="keyword">bool</span></span><br><span class="line">   tag := language.English</span><br><span class="line">   <span class="comment">//从上下文中获取语言类型</span></span><br><span class="line">   lang, ok = FromI18nContext(ctx)</span><br><span class="line">   <span class="keyword">if</span> ok &amp;&amp; lang == <span class="string">&quot;zh&quot;</span> &#123;</span><br><span class="line">      tag = language.Chinese</span><br><span class="line">   &#125;</span><br><span class="line">  <span class="comment">//获取语言包</span></span><br><span class="line">   template, ok := templates(lang, ID)</span><br><span class="line">   <span class="keyword">if</span> !ok &#123;</span><br><span class="line">      <span class="keyword">if</span> option.RawMsg != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> option.RawMsg</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> ID</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> i18n.NewLocalizer(i18n.NewBundle(tag), tag.String()).MustLocalize(&amp;i18n.LocalizeConfig&#123;</span><br><span class="line">      DefaultMessage: &amp;i18n.Message&#123;</span><br><span class="line">         ID:    ID,</span><br><span class="line">         Other: template,</span><br><span class="line">      &#125;,</span><br><span class="line">      TemplateData: option.MsgParams, <span class="comment">//模板中的参数</span></span><br><span class="line">   &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//用map存储的语言包</span></span><br><span class="line"><span class="comment">//可以支持文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">templates</span><span class="params">(lang, key <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">   data := en.TranslateToml <span class="comment">//这是自己定义的英文语言包map</span></span><br><span class="line">   <span class="keyword">if</span> lang == <span class="string">&quot;zh&quot;</span> &#123;</span><br><span class="line">      data = zh.TranslateToml <span class="comment">//这是自己定义的中文语言包map</span></span><br><span class="line">   &#125;</span><br><span class="line">   v, ok := data[key]</span><br><span class="line">   <span class="keyword">return</span> v, ok</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试用例：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestLocalize</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">   ctx := context.TODO()</span><br><span class="line">   ctx = NewI18nContext(ctx, <span class="string">&quot;zh&quot;</span>)</span><br><span class="line">   assertions := assert.New(t)</span><br><span class="line">   <span class="keyword">var</span> tests = []<span class="keyword">struct</span> &#123;</span><br><span class="line">      Name     <span class="keyword">string</span></span><br><span class="line">      ID       <span class="keyword">string</span></span><br><span class="line">      f        []LocalizeOptionsFunc</span><br><span class="line">      expected <span class="keyword">string</span></span><br><span class="line">   &#125;&#123;</span><br><span class="line">      &#123;</span><br><span class="line">         Name:     <span class="string">&quot;hello world no set name&quot;</span>,</span><br><span class="line">         ID:       <span class="string">&quot;hello_world&quot;</span>,</span><br><span class="line">         f:        []LocalizeOptionsFunc&#123;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;你好 &lt;no value&gt;&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         Name: <span class="string">&quot;hello set name&quot;</span>,</span><br><span class="line">         ID:   <span class="string">&quot;hello_world&quot;</span>,</span><br><span class="line">         f: []LocalizeOptionsFunc&#123;<span class="function"><span class="keyword">func</span><span class="params">(option *LocalizeOptions)</span></span> &#123;</span><br><span class="line">            option.MsgParams = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">               <span class="string">&quot;name&quot;</span>: <span class="string">&quot;apiserver&quot;</span>,</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;你好 apiserver&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         Name: <span class="string">&quot;set msg param&quot;</span>,</span><br><span class="line">         ID:   <span class="string">&quot;time_duration&quot;</span>,</span><br><span class="line">         f: []LocalizeOptionsFunc&#123;<span class="function"><span class="keyword">func</span><span class="params">(option *LocalizeOptions)</span></span> &#123;</span><br><span class="line">            option.MsgParams = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">               <span class="string">&quot;d&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;h&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;m&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;s&quot;</span>: <span class="number">11</span>,</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;11天11时11分11秒&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> _, tt := <span class="keyword">range</span> tests &#123;</span><br><span class="line">      t.Run(tt.Name, <span class="function"><span class="keyword">func</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">         res := Localize(ctx, tt.ID, tt.f...)</span><br><span class="line">         assertions.Equal(tt.expected, res)</span><br><span class="line">         t.Log(res)</span><br><span class="line">      &#125;)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>完整代码示例参数：<a target="_blank" rel="noopener" href="https://github.com/102er/apiserver/tree/main/pkg/i18n">102er-apiserver</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
 
     
 
@@ -1067,6 +981,118 @@
     
     <div class="post-body" itemprop="articleBody">
           
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/25/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/02/25/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" class="post-title-link" itemprop="url">分布式锁</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-25 23:00:53" itemprop="dateCreated datePublished" datetime="2021-02-25T23:00:53+08:00">2021-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-30 23:48:21" itemprop="dateModified" datetime="2021-12-30T23:48:21+08:00">2021-12-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%94%81/" itemprop="url" rel="index"><span itemprop="name">锁</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="什么是分布式？"><a href="#什么是分布式？" class="headerlink" title="什么是分布式？"></a>什么是分布式？</h2><p>分布式的 CAP 理论告诉我们:</p>
+<blockquote>
+<p>任何一个分布式系统都无法同时满足一致性（Consistency）、可用性（Availability）和分区容错性（Partition tolerance），最多只能同时满足两项。</p>
+</blockquote>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><h3 id="什么是锁"><a href="#什么是锁" class="headerlink" title="什么是锁"></a>什么是锁</h3><ul>
+<li>在单进程的系统中，当存在多个线程可以同时改变某个变量（可变共享变量）时，就需要对变量或代码块做同步，使其在修改这种变量时能够线性执行消除并发修改变量。</li>
+<li>而同步的本质是通过锁来实现的。为了实现多个线程在一个时刻同一个代码块只能有一个线程可执行，那么需要在某个地方做个标记，这个标记必须每个线程都能看到，当标记不存在时可以设置该标记，其余后续线程发现已经有标记了则等待拥有标记的线程结束同步代码块取消标记后再去尝试设置标记。这个标记可以理解为锁。不同地方实现锁的方式也不一样，只要能满足所有线程都能看得到标记即可。</li>
+<li>除了利用内存数据做锁其实任何互斥的都能做锁（只考虑互斥情况），只需要满足在对标记进行修改能保证原子性和内存可见性即可。</li>
+</ul>
+<h3 id="锁分类"><a href="#锁分类" class="headerlink" title="锁分类"></a>锁分类</h3><h4 id="悲观锁-乐观锁"><a href="#悲观锁-乐观锁" class="headerlink" title="悲观锁/乐观锁"></a>悲观锁/乐观锁</h4><p>乐观锁顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量。一般使用数据版本机制和cas操作来实现：</p>
+<ul>
+<li>数据版本机制，一般是在数据表中加上一个数据版本号version字段，表示数据被修改的次数，当数据被修改时，version值会加一。当线程A要更新数据值时，在读取数据的同时也会读取version值，在提交更新时，若刚才读取到的version值为当前数据库中的version值相等时才更新，否则重试更新操作，直到更新成功。</li>
+<li>CAS（Compare and Swap 比较并交换），当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。CAS操作中包含三个操作数——需要读写的内存位置(V)、进行比较的预期原值(A)和拟写入的新值(B)。如果内存位置V的值与预期原值A相匹配，那么处理器会自动将该位置值更新为新值B，否则处理器不做任何操作。</li>
+</ul>
+<p>悲观锁总是假设最坏的情况，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会阻塞直到它拿到锁。</p>
+<p>悲观锁适合写操作非常多的场景，乐观锁适合读操作非常多的场景，不加锁会带来大量的性能提升。</p>
+<h4 id="公平锁-非公平锁"><a href="#公平锁-非公平锁" class="headerlink" title="公平锁/非公平锁"></a>公平锁/非公平锁</h4><p>公平锁是指多个线程按照申请锁的顺序来获取锁。</p>
+<p>非公平锁是指多个线程获取锁的顺序并不是按照申请锁的顺序，有可能后申请的线程比先申请的线程优先获取锁。有可能，会造成优先级反转或者饥饿现象。</p>
+<h4 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h4><p><strong>自旋锁</strong>是指尝试获取锁的线程不会立即阻塞，而是采用循环的方式去尝试获取锁，这样的好处是减少线程上下文切换的消耗，缺点是循环会消耗CPU。</p>
+<h4 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h4><p>可重入锁又名递归锁，是指在同一个线程在外层方法获取锁的时候，在进入内层方法会自动获取锁。</p>
+<h2 id="实现分布式锁"><a href="#实现分布式锁" class="headerlink" title="实现分布式锁"></a>实现分布式锁</h2><h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><p>基于数据库的排他锁实现，在查询语句后面增加<code>for update</code>，数据库会在查询过程中给数据库表增加排他锁 (注意： InnoDB 引擎在加锁的时候，只有通过索引进行检索的时候才会使用行级锁，否则会使用表级锁。这里我们希望使用行级锁，就要给要执行的方法字段名添加索引，值得注意的是，这个索引一定要创建成唯一索引，否则会出现多个重载方法之间无法同时被访问的问题。重载方法的话建议把参数类型也加上。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。我们可以认为获得排他锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，通过<code>connection.commit()</code>操作来释放锁。</p>
+<h3 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h3><p>redis天然支持分布式锁实现，两个命令就可以搞定一把分布式锁：</p>
+<p>setnx()</p>
+<p>setnx 的含义就是 SET if Not Exists，其主要有两个参数 setnx(key, value)。该方法是原子的，如果 key 不存在，则设置当前 key 成功，返回 1；如果当前 key 已经存在，则设置当前 key 失败，返回 0。</p>
+<p>expire()</p>
+<p>expire 设置过期时间，要注意的是 setnx 命令不能设置 key 的超时时间，只能通过 expire() 来对 key 设置。</p>
+<h3 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h3><ul>
+<li>zk 一般由多个节点构成（单数），采用 zab 一致性协议。因此可以将 zk 看成一个单点结构，对其修改数据其内部自动将所有节点数据进行修改而后才提供查询服务。</li>
+<li>zk 的数据以目录树的形式，每个目录称为 znode， znode 中可存储数据（一般不超过 1M），还可以在其中增加子节点。</li>
+<li>子节点有三种类型。序列化节点，每在该节点下增加一个节点自动给该节点的名称上自增。临时节点，一旦创建这个 znode 的客户端与服务器失去联系，这个 znode 也将自动删除。最后就是普通节点。</li>
+<li>Watch 机制，client 可以监控每个节点的变化，当产生变化会给 client 产生一个事件。</li>
+</ul>
+<p>利用临时有序节点与 watch 机制。每个上锁的节点均能创建节点成功，只是其序号不同。只有序号最小的可以拥有锁，如果这个节点序号不是最小的则 watch 序号比本身小的前一个节点 (公平锁)。</p>
+
       
     </div>
 
