@@ -481,8 +481,10 @@
     <content><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用nginx+keepalived实现服务的高可用和负载均衡，解决服务负载以及服务可用性</p>
 <ul>
 <li>nginx：充当着网络流中“交通指挥官”的角色，“站在”服务器前处理所有服务器端和客户端之间的请求，从而最大程度地提高响应速率和容量利用率，同时确保任何服务器都没有超负荷工作。如果单个服务器出现故障，负载均衡的方法会将流量重定向到其余的集群服务器，以保证服务的稳定性。</li>
-<li>keepalive：保证nginx服务高可用，实现服务热备，当一台服务挂了，可以切换到另外一台服务</li>
+<li>keepalive：保证nginx服务高可用，会实时检测服务器的状态，如果有一台web服务器死机，或工作出现故障，Keepalived将检测到，并将有故障的服务器从系统中剔除，同时使用其他服务器代替该服务器的工作，当服务器工作正常后Keepalived自动将服务器加入到服务器群中</li>
 </ul>
+<p>服务部署如图：</p>
+<p><img src="https://102er.github.io/uploads/nginx-keepalived.png" alt="osi"></p>
 <h2 id="nginx负载均衡算法"><a href="#nginx负载均衡算法" class="headerlink" title="nginx负载均衡算法"></a>nginx负载均衡算法</h2><ul>
 <li><strong>轮询</strong></li>
 <li>加权轮询</li>
