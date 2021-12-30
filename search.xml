@@ -478,7 +478,29 @@
   <entry>
     <title>服务部署nginx+keepalived</title>
     <url>/2020/05/19/%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2nginx+keepalived/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>使用nginx+keepalived实现服务的高可用和负载均衡，解决服务负载以及服务可用性</p>
+<ul>
+<li>nginx：充当着网络流中“交通指挥官”的角色，“站在”服务器前处理所有服务器端和客户端之间的请求，从而最大程度地提高响应速率和容量利用率，同时确保任何服务器都没有超负荷工作。如果单个服务器出现故障，负载均衡的方法会将流量重定向到其余的集群服务器，以保证服务的稳定性。</li>
+<li>keepalive：保证nginx服务高可用，实现服务热备，当一台服务挂了，可以切换到另外一台服务</li>
+</ul>
+<h2 id="nginx负载均衡算法"><a href="#nginx负载均衡算法" class="headerlink" title="nginx负载均衡算法"></a>nginx负载均衡算法</h2><ul>
+<li><strong>轮询</strong></li>
+<li>加权轮询</li>
+<li>IP哈希</li>
+</ul>
+<h3 id="KeepAlived"><a href="#KeepAlived" class="headerlink" title="KeepAlived"></a>KeepAlived</h3><p>Keepalived是以VRRP协议为实现基础的，VRRP全称<code>Virtual Router Redundancy Protocol</code>，即<code>虚拟路由冗余协议</code>。可以认为是实现路由器高可用的协议，即将N台提供相同功能的路由器组成一个路由器组，这个组里面有一个master和多个backup，master上面有一个对外提供服务的vip，master会发组播，当backup收不到vrrp包时就认为master宕掉了，这时就需要根据VRRP的优先级来选举一个backup当master。选举策略是根据 VRRP 协议，完全按照权重大小，权重最大（0～255）的是 MASTER 机器，下面几种情况会触发选举：</p>
+<ol>
+<li>keepalived 启动的时候</li>
+<li>master 服务器出现故障（断网，重启，或者本机器上的 keepalived crash 等，而本机器上其他应用程序 crash 不算）</li>
+<li>有新的备份服务器加入且权重最大</li>
+</ol>
+<p>keepalived主要有三个模块:</p>
+<ul>
+<li>core模块为keepalived的核心，负责主进程的启动、维护以及全局配置文件的加载和解析。</li>
+<li>check负责健康检查，包括常见的各种检查方式。</li>
+<li>vrrp模块是来实现VRRP协议的。</li>
+</ul>
+]]></content>
       <categories>
         <category>服务部署</category>
       </categories>
@@ -548,7 +570,7 @@
 <p>测试用例：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestLocalize</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">   ctx := context.TODO()</span><br><span class="line">   ctx = NewI18nContext(ctx, <span class="string">&quot;zh&quot;</span>)</span><br><span class="line">   assertions := assert.New(t)</span><br><span class="line">   <span class="keyword">var</span> tests = []<span class="keyword">struct</span> &#123;</span><br><span class="line">      Name     <span class="keyword">string</span></span><br><span class="line">      ID       <span class="keyword">string</span></span><br><span class="line">      f        []LocalizeOptionsFunc</span><br><span class="line">      expected <span class="keyword">string</span></span><br><span class="line">   &#125;&#123;</span><br><span class="line">      &#123;</span><br><span class="line">         Name:     <span class="string">&quot;hello world no set name&quot;</span>,</span><br><span class="line">         ID:       <span class="string">&quot;hello_world&quot;</span>,</span><br><span class="line">         f:        []LocalizeOptionsFunc&#123;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;你好 &lt;no value&gt;&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         Name: <span class="string">&quot;hello set name&quot;</span>,</span><br><span class="line">         ID:   <span class="string">&quot;hello_world&quot;</span>,</span><br><span class="line">         f: []LocalizeOptionsFunc&#123;<span class="function"><span class="keyword">func</span><span class="params">(option *LocalizeOptions)</span></span> &#123;</span><br><span class="line">            option.MsgParams = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">               <span class="string">&quot;name&quot;</span>: <span class="string">&quot;apiserver&quot;</span>,</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;你好 apiserver&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         Name: <span class="string">&quot;set msg param&quot;</span>,</span><br><span class="line">         ID:   <span class="string">&quot;time_duration&quot;</span>,</span><br><span class="line">         f: []LocalizeOptionsFunc&#123;<span class="function"><span class="keyword">func</span><span class="params">(option *LocalizeOptions)</span></span> &#123;</span><br><span class="line">            option.MsgParams = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">               <span class="string">&quot;d&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;h&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;m&quot;</span>: <span class="number">11</span>,</span><br><span class="line">               <span class="string">&quot;s&quot;</span>: <span class="number">11</span>,</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;&#125;,</span><br><span class="line">         expected: <span class="string">&quot;11天11时11分11秒&quot;</span>,</span><br><span class="line">      &#125;,</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> _, tt := <span class="keyword">range</span> tests &#123;</span><br><span class="line">      t.Run(tt.Name, <span class="function"><span class="keyword">func</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">         res := Localize(ctx, tt.ID, tt.f...)</span><br><span class="line">         assertions.Equal(tt.expected, res)</span><br><span class="line">         t.Log(res)</span><br><span class="line">      &#125;)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>完整代码示例参数：<a href="https://github.com/102er/apiserver">102er-apiserver</a></p>
+<p>完整代码示例参数：<a href="https://github.com/102er/apiserver/tree/main/pkg/i18n">102er-apiserver</a></p>
 ]]></content>
       <categories>
         <category>GO</category>
@@ -639,7 +661,7 @@
 <p>main函数如下：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;fmt&quot;</span></span><br><span class="line">   v1 <span class="string">&quot;github.com/102er/apiserver/api/v1&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   reply := v1.HelloReply&#123;Message: <span class="string">&quot;102er&quot;</span>&#125;</span><br><span class="line">   fmt.Println(<span class="string">&quot;start api server,&quot;</span>, reply.Message)</span><br><span class="line">  <span class="comment">//调用的是 wire_gen.go 生成的函数</span></span><br><span class="line">   srv, err := initApi()</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="built_in">panic</span>(err)</span><br><span class="line">   &#125;</span><br><span class="line">  <span class="comment">//启动gin服务</span></span><br><span class="line">   err = srv.Run()</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="built_in">panic</span>(err)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h2><h4 id="不要使用默认类型"><a href="#不要使用默认类型" class="headerlink" title="不要使用默认类型"></a>不要使用默认类型</h4><p>wire 不支持两个提供<strong>两个相同类型</strong>的 provider，所以如果我们使用默认类型如 <code>int</code> <code>string</code> 等，只要有两个依赖就会导致报错，解决方案是使用类型别名。</p>
+<h3 id="高级特性"><a href="#高级特性" class="headerlink" title="高级特性"></a>高级特性</h3><h4 id="不要使用默认类型"><a href="#不要使用默认类型" class="headerlink" title="不要使用默认类型"></a>不要使用默认类型</h4><p>wire 不支持两个提供<strong>两个相同类型</strong>的 provider，所以如果我们使用默认类型如 <code>int</code> <code>string</code> 等，只要有两个依赖就会导致报错，解决方案是使用类型别名。</p>
 <h4 id="Option-Struct"><a href="#Option-Struct" class="headerlink" title="Option Struct"></a>Option Struct</h4><p>某个provide函数可能会有很多参数，这时候可以定义option struct，使用 <code>wire.Strcut</code> 来构建 Option Strcut 的依赖</p>
 <h4 id="返回错误"><a href="#返回错误" class="headerlink" title="返回错误"></a>返回错误</h4><p>在 go 中如果遇到错误，我们会在最后一个返回值返回 error，wire 同样也支持返回错误的情况，只需要在 injector 的函数签名中加上 error 返回值即可</p>
 <h4 id="清理函数"><a href="#清理函数" class="headerlink" title="清理函数"></a>清理函数</h4><p>通常打开文件或者是链接这种需要关闭的资源，这时候 provider 可以返回一个闭包函数 <code>func()</code> ，wire 在进行构建的时候，会在报错的时候调用，并且会将所有的<strong>闭包</strong>函数聚合返回。</p>
