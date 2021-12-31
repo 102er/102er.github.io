@@ -20,19 +20,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：  FIFO(First In First Out)：先进先出，也就是淘汰缓存中最老(最早添加)的记录。FIFO 认为，最早添加的记录，其不再被使用的可能性比刚添加的可能性大。这种算法的实现也非常简单，创建一个队列，新增记录添加到队尾">
+<meta name="description" content="服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：  FIFO(First In First Out)：先进先出，默认最早添加的记录，其不再被使用的可能性比刚添加的可能性大。实现比较简单，创建一个队列，新增记录添加到队尾，每次内存不够时，淘汰队首。但是很多场景下，部分记录虽然是最早添">
 <meta property="og:type" content="article">
 <meta property="og:title" content="lru和lfu">
 <meta property="og:url" content="http://example.com/2021/12/31/cache%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：  FIFO(First In First Out)：先进先出，也就是淘汰缓存中最老(最早添加)的记录。FIFO 认为，最早添加的记录，其不再被使用的可能性比刚添加的可能性大。这种算法的实现也非常简单，创建一个队列，新增记录添加到队尾">
+<meta property="og:description" content="服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：  FIFO(First In First Out)：先进先出，默认最早添加的记录，其不再被使用的可能性比刚添加的可能性大。实现比较简单，创建一个队列，新增记录添加到队尾，每次内存不够时，淘汰队首。但是很多场景下，部分记录虽然是最早添">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-12-31T03:35:04.000Z">
-<meta property="article:modified_time" content="2021-12-31T07:16:36.655Z">
+<meta property="article:modified_time" content="2021-12-31T08:02:52.174Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="GO">
-<meta property="article:tag" content="lru">
-<meta property="article:tag" content="lfu">
+<meta property="article:tag" content="缓存">
 <meta name="twitter:card" content="summary">
 
 
@@ -136,7 +135,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -149,6 +148,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#LRU%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">LRU实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LFU%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">LFU实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FIFO%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">FIFO实现</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -174,7 +174,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -238,7 +238,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-12-31 11:35:04 / 修改时间：15:16:36" itemprop="dateCreated datePublished" datetime="2021-12-31T11:35:04+08:00">2021-12-31</time>
+      <time title="创建时间：2021-12-31 11:35:04 / 修改时间：16:02:52" itemprop="dateCreated datePublished" datetime="2021-12-31T11:35:04+08:00">2021-12-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -262,12 +262,13 @@
     <div class="post-body" itemprop="articleBody">
         <p>服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：</p>
 <ul>
-<li>FIFO(First In First Out)：先进先出，也就是淘汰缓存中最老(最早添加)的记录。FIFO 认为，最早添加的记录，其不再被使用的可能性比刚添加的可能性大。这种算法的实现也非常简单，创建一个队列，新增记录添加到队尾，每次内存不够时，淘汰队首。但是很多场景下，部分记录虽然是最早添加但也最常被访问，而不得不因为呆的时间太长而被淘汰。这类数据会被频繁地添加进缓存，又被淘汰出去，导致缓存命中率降低。</li>
-<li>LFU(Least Frequently Used)：最少使用，也就是淘汰缓存中访问频率最低的记录。LFU 认为，如果数据过去被访问多次，那么将来被访问的频率也更高。LFU 的实现需要维护一个按照访问次数排序的队列，每次访问，访问次数加1，队列重新排序，淘汰时选择访问次数最少的即可。LFU 算法的命中率是比较高的，但缺点也非常明显，维护每个记录的访问次数，对内存的消耗是很高的；另外，如果数据的访问模式发生变化，LFU 需要较长的时间去适应，也就是说 LFU 算法受历史数据的影响比较大。例如某个数据历史上访问次数奇高，但在某个时间点之后几乎不再被访问，但因为历史访问次数过高，而迟迟不能被淘汰。</li>
-<li>LRU(Least Recently Used)：最近最少使用，相对于仅考虑时间因素的 FIFO 和仅考虑访问频率的 LFU，LRU 算法可以认为是相对平衡的一种淘汰算法。LRU 认为，如果数据最近被访问过，那么将来被访问的概率也会更高。LRU 算法的实现非常简单，维护一个队列，如果某条记录被访问了，则移动到队尾，那么队首则是最近最少访问的数据，淘汰该条记录即可。</li>
+<li>FIFO(First In First Out)：先进先出，默认最早添加的记录，其不再被使用的可能性比刚添加的可能性大。实现比较简单，创建一个队列，新增记录添加到队尾，每次内存不够时，淘汰队首。但是很多场景下，部分记录虽然是最早添加但也最常被访问，而不得不因为呆的时间太长而被淘汰。这类数据会被频繁地添加进缓存，又被淘汰出去，导致缓存命中率降低。</li>
+<li>LFU(Least Frequently Used)：基于访问次数淘汰。即最少使用，也就是淘汰缓存中访问频率最低的记录。LFU 认为，如果数据过去被访问多次，那么将来被访问的频率也更高。LFU 的实现需要维护一个按照访问次数排序的队列，每次访问，访问次数加1，队列重新排序，淘汰时选择访问次数最少的即可。LFU 算法的命中率是比较高的，但缺点也非常明显，维护每个记录的访问次数，对内存的消耗是很高的；另外，如果数据的访问模式发生变化，LFU 需要较长的时间去适应，也就是说 LFU 算法受历史数据的影响比较大。例如某个数据历史上访问次数奇高，但在某个时间点之后几乎不再被访问，但因为历史访问次数过高，而迟迟不能被淘汰。</li>
+<li>LRU(Least Recently Used)：基于访问时间淘汰。即最近最少使用，相对于仅考虑时间因素的 FIFO 和仅考虑访问频率的 LFU，LRU 算法可以认为是相对平衡的一种淘汰算法。LRU 认为，如果数据最近被访问过，那么将来被访问的概率也会更高。LRU 算法的实现非常简单，维护一个队列，如果某条记录被访问了，则移动到队尾，那么队首则是最近最少访问的数据，淘汰该条记录即可。</li>
 </ul>
 <span id="more"></span>
 
+<h3 id="LRU实现"><a href="#LRU实现" class="headerlink" title="LRU实现"></a>LRU实现</h3><h3 id="LFU实现"><a href="#LFU实现" class="headerlink" title="LFU实现"></a>LFU实现</h3><h3 id="FIFO实现"><a href="#FIFO实现" class="headerlink" title="FIFO实现"></a>FIFO实现</h3>
     </div>
 
     
@@ -277,8 +278,7 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/GO/" rel="tag"># GO</a>
-              <a href="/tags/lru/" rel="tag"># lru</a>
-              <a href="/tags/lfu/" rel="tag"># lfu</a>
+              <a href="/tags/%E7%BC%93%E5%AD%98/" rel="tag"># 缓存</a>
           </div>
 
         
