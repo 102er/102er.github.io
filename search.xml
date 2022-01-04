@@ -782,7 +782,7 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title>lru和lfu</title>
+    <title>cache淘汰算法</title>
     <url>/2021/12/31/cache%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95/</url>
     <content><![CDATA[<p>服务中经常使用内存作为缓存数据，但是内存是有限的，所以需要在内存满时，使用一定的规则淘汰某个数据，让新数据可以加入缓存中。常用的淘汰算法有：LRU，LFU，FIFO：</p>
 <ul>
