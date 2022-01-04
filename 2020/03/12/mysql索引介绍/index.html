@@ -20,15 +20,15 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="概述　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。使用索引用于快速找出在某个或多个列中有一特定值的行，所有MySQL列类型都可以被索引，对相关列使用索引是提高查询操作速度的最佳途径。　　MySQL索引的建立对于MySQL的高效运行是很重要的，索引可以大大提高MySQL的检索速度。比如我们在查字典的时候，前面都有检索的拼音和偏旁、笔画等，然后找到对应字典页码">
+<meta name="description" content="概述　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。简单来说，索引就是一本书的目录，如果没有建立索引，我们需要看书的某个主题内容，只能从头到尾翻（这就是全表扫描），如果这本书有目录，那么我们只要按照目录查找，很快就可以定位主题所在页。索引，是帮助MySQL高效获取数据的数据结构。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="mysql索引介绍">
 <meta property="og:url" content="http://example.com/2020/03/12/mysql%E7%B4%A2%E5%BC%95%E4%BB%8B%E7%BB%8D/index.html">
 <meta property="og:site_name" content="102er">
-<meta property="og:description" content="概述　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。使用索引用于快速找出在某个或多个列中有一特定值的行，所有MySQL列类型都可以被索引，对相关列使用索引是提高查询操作速度的最佳途径。　　MySQL索引的建立对于MySQL的高效运行是很重要的，索引可以大大提高MySQL的检索速度。比如我们在查字典的时候，前面都有检索的拼音和偏旁、笔画等，然后找到对应字典页码">
+<meta property="og:description" content="概述　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。简单来说，索引就是一本书的目录，如果没有建立索引，我们需要看书的某个主题内容，只能从头到尾翻（这就是全表扫描），如果这本书有目录，那么我们只要按照目录查找，很快就可以定位主题所在页。索引，是帮助MySQL高效获取数据的数据结构。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-03-12T06:31:03.000Z">
-<meta property="article:modified_time" content="2021-12-24T10:52:24.963Z">
+<meta property="article:modified_time" content="2022-01-04T15:19:34.186Z">
 <meta property="article:author" content="blossom">
 <meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary">
@@ -147,7 +147,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">类别</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B%E6%A0%91%E5%92%8CB-%E6%A0%91"><span class="nav-number">2.</span> <span class="nav-text">B树和B+树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%88%86%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">索引分类</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -243,7 +243,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-24 18:52:24" itemprop="dateModified" datetime="2021-12-24T18:52:24+08:00">2021-12-24</time>
+      <time title="修改时间：2022-01-04 23:19:34" itemprop="dateModified" datetime="2022-01-04T23:19:34+08:00">2022-01-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -265,10 +265,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。使用索引用于快速找出在某个或多个列中有一特定值的行，所有MySQL列类型都可以被索引，对相关列使用索引是提高查询操作速度的最佳途径。<br>　　MySQL索引的建立对于MySQL的高效运行是很重要的，索引可以大大提高MySQL的检索速度。比如我们在查字典的时候，前面都有检索的拼音和偏旁、笔画等，然后找到对应字典页码，这样然后就打开字典的页数就可以知道我们要搜索的某一个key的全部值的信息了。<br>　　创建索引时，你需要确保该索引是应用在 SQL 查询语句的条件(一般作为 WHERE 子句的条件)，而不是在select的字段中，实际上，索引也是一张“表”，该表保存了主键与索引字段，并指向实体表的记录，虽然索引大大提高了查询速度，同时却会降低更新表的速度，如对表进行INSERT、UPDATE和DELETE。因为更新表时，MySQL不仅要保存数据，还要保存一下索引文件，建立索引会占用磁盘空间的索引文件。说白了索引就是用来提高速度的，但是就需要维护索引造成资源的浪费，所以合理的创建索引是必要的。</p>
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>　　索引是一个单独的、存储在磁盘上的数据库结构，它们包含着对数据表里所有记录的引用指针。简单来说，索引就是一本书的目录，如果没有建立索引，我们需要看书的某个主题内容，只能从头到尾翻（这就是全表扫描），如果这本书有目录，那么我们只要按照目录查找，很快就可以定位主题所在页。索引，是帮助MySQL高效获取数据的数据结构。</p>
 <span id="more"></span>
 
-<h2 id="类别"><a href="#类别" class="headerlink" title="类别"></a>类别</h2>
+<h2 id="B树和B-树"><a href="#B树和B-树" class="headerlink" title="B树和B+树"></a>B树和B+树</h2><p>目前大部分数据库系统及文件系统都采用B-Tree或其变种B+Tree作为索引结构，mysql中索引常用的数据结构是B+树。Mysql实际是将索引数据存储在索引页中的，如果索引页中的数据越来越多，索引页同样会进行页分裂。这样索引页也就形成了不同的层级，索引页层、索引页、数据页这三个页数据就形成了我们说的B+树。</p>
+<ul>
+<li>B-Tree：一种多路搜索树，关键字分布在整棵树中，任何一个关键字出现且只出现在一个结点中</li>
+<li>B+Tree：一种多路搜索树，所有关键字都出现在叶子结点的链表中（稠密索引），且链表中的关键字恰好是有序的；非叶子结点相当于是叶子结点的索引（稀疏索引），叶子结点相当于是存储（关键字）数据的数据层；</li>
+</ul>
+<p>正常来说索引本身数据量很大，不可能全部存储在内存中，一般是以文件形式存储在磁盘上。那么扫描文件产生磁盘I/O消耗会影响查询的效率，一个好的索引结构组织就是要尽量减少查找过程中磁盘I/O的存取次数。<u>B+树相对于B树，因为其非叶子节点并没有指向关键字具体信息的指针，因此内部结构相对B树更小，那么相同的文件B+树可以容纳更多的关键字数量，一次性读入内存中的数量更多，相对来说就是减少了IO读写次数，从而提高了查询效率</u>；另外，非叶子节点不指向数据，B+树的搜索每次都必须到叶子节点，每次查询的路径长度相同，所以其查询效率更加稳定。</p>
+<h2 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h2>
     </div>
 
     
@@ -310,7 +316,7 @@
 
 <div class="copyright">
   &copy; 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
