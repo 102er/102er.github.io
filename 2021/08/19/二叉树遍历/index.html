@@ -19,11 +19,11 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"102er.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.8.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 <meta name="description" content="概述二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii">
 <meta property="og:type" content="article">
 <meta property="og:title" content="二叉树遍历">
-<meta property="og:url" content="http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/index.html">
+<meta property="og:url" content="https://102er.github.io/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/index.html">
 <meta property="og:site_name" content="102er">
 <meta property="og:description" content="概述二叉树是一种「数据结构」，二叉树是每个节点最多有**两个子树**的树结构，通常子树被称作“左子树”和“右子树”。如下图：   满二叉树：对于一棵二叉树，如果每一个非叶子节点都存在左右子树，并且二叉树中所有的叶子节点都在同一层中，这样的二叉树称为满二叉树。 完全二叉树：对于一棵具有nn个节点的二叉树按照层次编号，同时，左右子树按照先左后右编号，如果编号为ii的节点与同样深度的满二叉树中编号为ii">
 <meta property="og:locale" content="zh_CN">
@@ -36,11 +36,11 @@
 <meta name="twitter:image" content="https://102er.github.io/uploads/2chashu.png">
 
 
-<link rel="canonical" href="http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/">
+<link rel="canonical" href="https://102er.github.io/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/","path":"2021/08/19/二叉树遍历/","title":"二叉树遍历"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://102er.github.io/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/","path":"2021/08/19/二叉树遍历/","title":"二叉树遍历"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>二叉树遍历 | 102er</title>
@@ -214,7 +214,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/">
+    <link itemprop="mainEntityOfPage" href="https://102er.github.io/2021/08/19/%E4%BA%8C%E5%8F%89%E6%A0%91%E9%81%8D%E5%8E%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpeg">
