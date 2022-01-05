@@ -208,94 +208,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/" class="post-title-link" itemprop="url">go实现动态鉴权</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-10-15 20:16:32" itemprop="dateCreated datePublished" datetime="2021-10-15T20:16:32+08:00">2021-10-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-30 23:59:30" itemprop="dateModified" datetime="2021-12-30T23:59:30+08:00">2021-12-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>动态鉴权：对每个请求实现动态认证，保证访问安全可靠。客户端和服务端使用相同的秘钥以及规则进行加密请求，结果相等或者在有效期内，则认为请求合法。加密流程如图：</p>
-<p><img src="https://102er.github.io/uploads/AK_SK.png" alt="osi"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/10/git%E7%89%88%E6%9C%AC%E5%9B%9E%E9%80%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1076,6 +988,93 @@
 <p>PKCS7Padding填充模式：假设数据长度需要填充 n(n&gt;0) 个字节才对齐，那么填充 n 个字节，每个字节都是 n 。如果数据本身就已经对齐了，则填充一块长度为块大小的数据，每个字节都是块大小。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cipher</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">   <span class="string">&quot;bytes&quot;</span></span><br><span class="line">   <span class="string">&quot;crypto/aes&quot;</span></span><br><span class="line">   <span class="string">&quot;crypto/cipher&quot;</span></span><br><span class="line">   <span class="string">&quot;encoding/base64&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">   key = <span class="string">&quot;1234567890abcdef&quot;</span></span><br><span class="line">   iv  = <span class="string">&quot;iv0494f002332659&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AesEncryptNoBase64</span><span class="params">(data []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> newAESCBCCipher(key, iv).AESCBCBase64Encode(data)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> AESCBCCipher <span class="keyword">struct</span> &#123;</span><br><span class="line">   Key <span class="keyword">string</span></span><br><span class="line">   IV  <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newAESCBCCipher</span><span class="params">(key, iv <span class="keyword">string</span>)</span> *<span class="title">AESCBCCipher</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> &amp;AESCBCCipher&#123;</span><br><span class="line">      key, iv,</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// AESCBCBase64Encode 开始加密</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *AESCBCCipher)</span> <span class="title">AESCBCBase64Encode</span><span class="params">(_data []<span class="keyword">byte</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">   _key := []<span class="keyword">byte</span>(a.Key)</span><br><span class="line">   _iv := []<span class="keyword">byte</span>(a.IV)</span><br><span class="line"></span><br><span class="line">   _data = PKCS7Padding(_data)</span><br><span class="line">   block, err := aes.NewCipher(_key)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   mode := cipher.NewCBCEncrypter(block, _iv)</span><br><span class="line">   mode.CryptBlocks(_data, _data)</span><br><span class="line">   <span class="keyword">return</span> base64.StdEncoding.EncodeToString(_data), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// AESCBCBase64Decode 开始解密</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *AESCBCCipher)</span> <span class="title">AESCBCBase64Decode</span><span class="params">(data <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">   _data, err := base64.StdEncoding.DecodeString(data)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   _key := []<span class="keyword">byte</span>(a.Key)</span><br><span class="line">   _iv := []<span class="keyword">byte</span>(a.IV)</span><br><span class="line"></span><br><span class="line">   block, err := aes.NewCipher(_key)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   mode := cipher.NewCBCDecrypter(block, _iv)</span><br><span class="line">   mode.CryptBlocks(_data, _data)</span><br><span class="line">   _data = PKCS7UnPadding(_data)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">string</span>(_data), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS7Padding</span><span class="params">(data []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">   padding := aes.BlockSize - <span class="built_in">len</span>(data)%aes.BlockSize</span><br><span class="line">   padtext := bytes.Repeat([]<span class="keyword">byte</span>&#123;<span class="keyword">byte</span>(padding)&#125;, padding)</span><br><span class="line">   <span class="keyword">return</span> <span class="built_in">append</span>(data, padtext...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PKCS7UnPadding</span><span class="params">(data []<span class="keyword">byte</span>)</span> []<span class="title">byte</span></span> &#123;</span><br><span class="line">   length := <span class="built_in">len</span>(data)</span><br><span class="line">   unpadding := <span class="keyword">int</span>(data[length<span class="number">-1</span>])</span><br><span class="line">   <span class="keyword">return</span> data[:(length - unpadding)]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/22/go%E5%B9%B6%E5%8F%91%E9%80%9A%E4%BF%A1-channel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/05/22/go%E5%B9%B6%E5%8F%91%E9%80%9A%E4%BF%A1-channel/" class="post-title-link" itemprop="url">go并发通信-channel</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-05-22 11:29:21" itemprop="dateCreated datePublished" datetime="2021-05-22T11:29:21+08:00">2021-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-10 15:35:52" itemprop="dateModified" datetime="2021-12-10T15:35:52+08:00">2021-12-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h4><p>管道，保证线程安全，用于数据传递或者数据共享，属于先进先出的队列。实现 Channel 的结构并不神秘，本质上就是一个 <code>mutex</code> 锁加上一个环状缓存、 一个发送方队列和一个接收方队列。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/22/go%E5%B9%B6%E5%8F%91%E9%80%9A%E4%BF%A1-channel/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
