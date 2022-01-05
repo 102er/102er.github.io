@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-count">29</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -199,6 +199,74 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/01/05/go%E5%AE%9E%E7%8E%B0%E6%B5%81%E9%87%8F%E5%8D%95%E4%BD%8D%E6%8D%A2%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/05/go%E5%AE%9E%E7%8E%B0%E6%B5%81%E9%87%8F%E5%8D%95%E4%BD%8D%E6%8D%A2%E7%AE%97/" class="post-title-link" itemprop="url">go实现流量单位换算</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-05 13:31:02 / 修改时间：13:37:24" itemprop="dateCreated datePublished" datetime="2022-01-05T13:31:02+08:00">2022-01-05</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>B字节换算成存储单位，通过位运算实现</p>
+<p>1024 = 1 &lt;&lt; 10</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//返回换算后的值 换算单位 换算基准</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">humanBytesLoaded</span><span class="params">(s <span class="keyword">int64</span>)</span> <span class="params">(<span class="keyword">string</span>, <span class="keyword">string</span>, <span class="keyword">int64</span>)</span></span> &#123;</span><br><span class="line">   suffix := <span class="string">&quot;&quot;</span></span><br><span class="line">   <span class="keyword">var</span> n <span class="keyword">int64</span> = <span class="number">1</span></span><br><span class="line">   units := []<span class="keyword">string</span>&#123;<span class="string">&quot;B&quot;</span>, <span class="string">&quot;KB&quot;</span>, <span class="string">&quot;MB&quot;</span>, <span class="string">&quot;GB&quot;</span>, <span class="string">&quot;TB&quot;</span>, <span class="string">&quot;PB&quot;</span>&#125;</span><br><span class="line">   <span class="keyword">for</span> k, v := <span class="keyword">range</span> units &#123;</span><br><span class="line">      suffix = v</span><br><span class="line">      b := (k + <span class="number">1</span>) * <span class="number">10</span></span><br><span class="line">      n = <span class="number">1</span> &lt;&lt; (k * <span class="number">10</span>)</span><br><span class="line">      <span class="keyword">if</span> k == <span class="built_in">len</span>(units)<span class="number">-1</span> &#123;</span><br><span class="line">         <span class="keyword">break</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> s &lt; (<span class="number">1</span> &lt;&lt; b) &#123;</span><br><span class="line">         <span class="keyword">break</span></span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   r := round(<span class="keyword">float64</span>(s)/<span class="keyword">float64</span>(n), <span class="number">1</span>)</span><br><span class="line">   <span class="keyword">return</span> fmt.Sprintf(<span class="string">&quot;%v%s&quot;</span>, r, suffix), suffix, n</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//保留1位小数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">round</span><span class="params">(value <span class="keyword">float64</span>, precision <span class="keyword">int</span>)</span> <span class="title">float64</span></span> &#123;</span><br><span class="line">	p := math.Pow10(precision)</span><br><span class="line">	<span class="keyword">return</span> math.Trunc((value+<span class="number">0.5</span>/p)*p) / p</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -925,94 +993,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/" class="post-title-link" itemprop="url">go实现动态鉴权</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-10-15 20:16:32" itemprop="dateCreated datePublished" datetime="2021-10-15T20:16:32+08:00">2021-10-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-30 23:59:30" itemprop="dateModified" datetime="2021-12-30T23:59:30+08:00">2021-12-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>动态鉴权：对每个请求实现动态认证，保证访问安全可靠。客户端和服务端使用相同的秘钥以及规则进行加密请求，结果相等或者在有效期内，则认为请求合法。加密流程如图：</p>
-<p><img src="https://102er.github.io/uploads/AK_SK.png" alt="osi"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/10/15/go%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E9%89%B4%E6%9D%83/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
