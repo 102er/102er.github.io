@@ -846,4 +846,22 @@
         <tag>消息队列</tag>
       </tags>
   </entry>
+  <entry>
+    <title>vim牛牛牛</title>
+    <url>/2022/01/07/vim%E7%89%9B%E7%89%9B%E7%89%9B/</url>
+    <content><![CDATA[<p>Vim常用快捷键介绍，vim有几种模式：</p>
+<p>命令模式：通过冒号(:)进入</p>
+<p>编辑模式：一般通过 i o等进入</p>
+<h4 id="ls-and-bn"><a href="#ls-and-bn" class="headerlink" title="ls and bn"></a>ls and bn</h4><p>vim 可以同时打开多个文件，vim file1 file2进入多文件编辑，进入命令模式，输入<u>:ls</u>可以列出打开文件列表，输入<u>:bn</u>(n=文件列表序号)，即可进行文件切换：</p>
+<p><img src="https://102er.github.io/uploads/vim-ls.png" alt="osi"></p>
+<p>当然vim也可以进行多个文件的左右分屏或者上下分屏操作，操作比较复杂，暂时用不上</p>
+<h4 id="w-and-w"><a href="#w-and-w" class="headerlink" title="w and !w"></a>w and !w</h4><p><u>:w</u>保存当前文件，但是不退出，<u>:!w</u>强制保存但是不退出文件</p>
+<p><u>:w  file</u> 保存当前的文件修改到 file 文件当中</p>
+<h4 id="q-and-wq-and-x"><a href="#q-and-wq-and-x" class="headerlink" title="q! and wq and :x"></a>q! and wq and :x</h4><p>:<u>q!</u>退出文件，对文件的修改不做保存。</p>
+<p><u>:wq</u>退出文件并保存对文件的修改。</p>
+<p><u>:x</u>退出文件并保存对文件的修改。</p>
+<h4 id="e"><a href="#e" class="headerlink" title="e!"></a>e!</h4><p><u>:e!</u>放弃对文件的所有修改，恢复文件到上次保存的位置。</p>
+<h4 id="saveas-file"><a href="#saveas-file" class="headerlink" title="saveas file"></a>saveas file</h4><p><u>:saveas filed</u>d当前文件另存为 file。</p>
+]]></content>
+  </entry>
 </search>
