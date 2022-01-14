@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,6 +208,76 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://102er.github.io/2022/01/14/rsa%E5%8A%A0%E5%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="blossom">
+      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="102er">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/14/rsa%E5%8A%A0%E5%AF%86/" class="post-title-link" itemprop="url">rsa加密</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-14 10:25:22 / 修改时间：10:52:13" itemprop="dateCreated datePublished" datetime="2022-01-14T10:25:22+08:00">2022-01-14</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>RSA加密算法是一种非对称加密算法，使用公钥加密，私钥解密。</p>
+<p>RSA私钥存在PKCS1和PKCS8两种格式。</p>
+<p>golang提供了encoding/pem包和crypto/x509包进行rsa的加解密。实现上需要注意公钥和私钥的格式，按照对应的包进行parse。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	privateKey = <span class="string">`-----BEGIN RSA PRIVATE KEY-----</span></span><br><span class="line"><span class="string">MIICXQIBAAKBgQDZsfv1qscqYdy4vY+P4e3cAtmvppXQcRvrF1cB4drkv0haU24Y</span></span><br><span class="line"><span class="string">7m5qYtT52Kr539RdbKKdLAM6s20lWy7+5C0DgacdwYWd/7PeCELyEipZJL07Vro7</span></span><br><span class="line"><span class="string">Ate8Bfjya+wltGK9+XNUIHiumUKULW4KDx21+1NLAUeJ6PeW+DAkmJWF6QIDAQAB</span></span><br><span class="line"><span class="string">AoGBAJlNxenTQj6OfCl9FMR2jlMJjtMrtQT9InQEE7m3m7bLHeC+MCJOhmNVBjaM</span></span><br><span class="line"><span class="string">ZpthDORdxIZ6oCuOf6Z2+Dl35lntGFh5J7S34UP2BWzF1IyyQfySCNexGNHKT1G1</span></span><br><span class="line"><span class="string">XKQtHmtc2gWWthEg+S6ciIyw2IGrrP2Rke81vYHExPrexf0hAkEA9Izb0MiYsMCB</span></span><br><span class="line"><span class="string">/jemLJB0Lb3Y/B8xjGjQFFBQT7bmwBVjvZWZVpnMnXi9sWGdgUpxsCuAIROXjZ40</span></span><br><span class="line"><span class="string">IRZ2C9EouwJBAOPjPvV8Sgw4vaseOqlJvSq/C/pIFx6RVznDGlc8bRg7SgTPpjHG</span></span><br><span class="line"><span class="string">4G+M3mVgpCX1a/EU1mB+fhiJ2LAZ/pTtY6sCQGaW9NwIWu3DRIVGCSMm0mYh/3X9</span></span><br><span class="line"><span class="string">DAcwLSJoctiODQ1Fq9rreDE5QfpJnaJdJfsIJNtX1F+L3YceeBXtW0Ynz2MCQBI8</span></span><br><span class="line"><span class="string">9KP274Is5FkWkUFNKnuKUK4WKOuEXEO+LpR+vIhs7k6WQ8nGDd4/mujoJBr5mkrw</span></span><br><span class="line"><span class="string">DPwqA3N5TMNDQVGv8gMCQQCaKGJgWYgvo3/milFfImbp+m7/Y3vCptarldXrYQWO</span></span><br><span class="line"><span class="string">AQjxwc71ZGBFDITYvdgJM1MTqc8xQek1FXn1vfpy2c6O</span></span><br><span class="line"><span class="string">-----END RSA PRIVATE KEY-----`</span></span><br><span class="line">	publicKey = <span class="string">`-----BEGIN PUBLIC KEY-----</span></span><br><span class="line"><span class="string">MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZsfv1qscqYdy4vY+P4e3cAtmv</span></span><br><span class="line"><span class="string">ppXQcRvrF1cB4drkv0haU24Y7m5qYtT52Kr539RdbKKdLAM6s20lWy7+5C0Dgacd</span></span><br><span class="line"><span class="string">wYWd/7PeCELyEipZJL07Vro7Ate8Bfjya+wltGK9+XNUIHiumUKULW4KDx21+1NL</span></span><br><span class="line"><span class="string">AUeJ6PeW+DAkmJWF6QIDAQAB</span></span><br><span class="line"><span class="string">-----END PUBLIC KEY-----`</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">type</span> RSACipher <span class="keyword">struct</span> &#123;</span><br><span class="line">   privateKey []<span class="keyword">byte</span></span><br><span class="line">   publicKey  []<span class="keyword">byte</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RsaDecryptBase64</span><span class="params">(content <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">   _data, err := base64.StdEncoding.DecodeString(content)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   decrypt, err := newRSACipher(privateKey, publicKey).decode(_data)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">string</span>(decrypt), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RsaDecodeBase64</span><span class="params">(content <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">   decrypt, err := newRSACipher(privateKey, publicKey).encrypt([]<span class="keyword">byte</span>(content))</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> base64.StdEncoding.EncodeToString(decrypt), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newRSACipher</span><span class="params">(privateKey, publicKey <span class="keyword">string</span>)</span> *<span class="title">RSACipher</span></span> &#123;</span><br><span class="line">   <span class="keyword">return</span> &amp;RSACipher&#123;</span><br><span class="line">      []<span class="keyword">byte</span>(privateKey), []<span class="keyword">byte</span>(publicKey),</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RSACipher)</span> <span class="title">encrypt</span><span class="params">(origData []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">   block, _ := pem.Decode(r.publicKey)</span><br><span class="line">   <span class="keyword">if</span> block == <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">&quot;public key error&quot;</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">var</span> pub *rsa.PublicKey</span><br><span class="line">   <span class="keyword">var</span> ok <span class="keyword">bool</span></span><br><span class="line">   <span class="keyword">var</span> err error</span><br><span class="line">   <span class="keyword">if</span> block.Type == <span class="string">&quot;RSA PUBLIC KEY&quot;</span> &#123;</span><br><span class="line">      pub, err = x509.ParsePKCS1PublicKey(block.Bytes)</span><br><span class="line">      <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">      &#125;</span><br><span class="line">   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      pubInterface, err2 := x509.ParsePKIXPublicKey(block.Bytes)</span><br><span class="line">      <span class="keyword">if</span> err2 != <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, err2</span><br><span class="line">      &#125;</span><br><span class="line">      pub, ok = pubInterface.(*rsa.PublicKey)</span><br><span class="line">      <span class="keyword">if</span> !ok &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">&quot;key not public key&quot;</span>)</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> rsa.EncryptPKCS1v15(rand.Reader, pub, origData)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *RSACipher)</span> <span class="title">decode</span><span class="params">(ciphertext []<span class="keyword">byte</span>)</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">   block, _ := pem.Decode(r.privateKey)</span><br><span class="line">   <span class="keyword">if</span> block == <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">&quot;private key error&quot;</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   priv, err := x509.ParsePKCS1PrivateKey(block.Bytes)</span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="comment">/* rsaKey, ok := priv.(*rsa.PrivateKey)</span></span><br><span class="line"><span class="comment">      if !ok &#123;</span></span><br><span class="line"><span class="comment">         return nil, errors.New(&quot;key not PrivateKey&quot;)</span></span><br><span class="line"><span class="comment">      &#125;*/</span></span><br><span class="line">   <span class="keyword">return</span> rsa.DecryptPKCS1v15(rand.Reader, priv, ciphertext)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整代码示例参数：<a target="_blank" rel="noopener" href="https://github.com/102er/apiserver/blob/main/pkg/cipher/rsa.go">rsa加密</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://102er.github.io/2022/01/07/vim%E7%89%9B%E7%89%9B%E7%89%9B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -239,7 +309,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-01-08 21:09:54" itemprop="dateModified" datetime="2022-01-08T21:09:54+08:00">2022-01-08</time>
+      <time title="修改时间：2022-01-14 09:57:47" itemprop="dateModified" datetime="2022-01-14T09:57:47+08:00">2022-01-14</time>
     </span>
 
   
@@ -254,7 +324,13 @@
     <div class="post-body" itemprop="articleBody">
           <p>Vim常用快捷键介绍，vim有几种模式：</p>
 <p>命令模式：通过冒号(:)进入</p>
-<p>编辑模式：一般通过 i o等进入</p>
+<p>编辑模式：一般通过i, I, o, O, a, A, r, R任意一个字母进入</p>
+<h4 id="翻页"><a href="#翻页" class="headerlink" title="翻页"></a>翻页</h4><ul>
+<li>方向键，或者 h，j，k，l 可以移动1个字符或者下一行；通过数字+h,j,k,l进行多个单元移动，比如3j，29l</li>
+<li>ctrl + f,b,d,u 翻页移动</li>
+<li>0和home：移動到這一列的最前面字元處</li>
+<li>$ 或功能鍵[End]：移動到這一列的最後面字元處</li>
+</ul>
 <h4 id="ls-and-bn"><a href="#ls-and-bn" class="headerlink" title="ls and bn"></a>ls and bn</h4><p>vim 可以同时打开多个文件，vim file1 file2进入多文件编辑，进入命令模式，输入<u>:ls</u>可以列出打开文件列表，输入<u>:bn</u>(n=文件列表序号)，即可进行文件切换：</p>
 <p><img src="https://102er.github.io/uploads/vim-ls.png" alt="osi"></p>
 <p>当然vim也可以进行多个文件的左右分屏或者上下分屏操作，操作比较复杂，暂时用不上</p>
@@ -943,95 +1019,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://102er.github.io/2021/11/12/protoc%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/uploads/avatar.jpeg">
-      <meta itemprop="name" content="blossom">
-      <meta itemprop="description" content="別迷茫，别困惑，事情最后總會有辦法解決的，自己的路自己走">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="102er">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">protoc使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-11-12 17:24:00" itemprop="dateCreated datePublished" datetime="2021-11-12T17:24:00+08:00">2021-11-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2021-12-23 23:04:25" itemprop="dateModified" datetime="2021-12-23T23:04:25+08:00">2021-12-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/GO/" itemprop="url" rel="index"><span itemprop="name">GO</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>grpc使用protobuf进行数据的序列化和反序列化，在开发中经常需要写proto文件，进行接口声明定义，然后通过protoc工具转成相应的代码文件，protoc工具不支持生成go代码文件，需要按照相应的插件协助；本文主要介绍protoc工具的使用，以及proto文件的定义。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/11/12/protoc%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
